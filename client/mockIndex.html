@@ -9,48 +9,50 @@
 <body>
 
   <script>
-    var sendCheckMessages = true;
-    var sendCreateNewRoom = true;
-    var sendAddNewMessage = false;
-    var requestInterval = 5000;
+    var sendCheckMessages = false;
+    var sendCreateNewRoom = false;
+    var sendAddNewMessage = true;
+    var requestInterval = 2000;
 
     window.setInterval(function() {
       if (sendCheckMessages) {
-        var checkMessages = $.ajax({
+        $.ajax({
           url: "http://127.0.0.1:3000/",
-          method: "GET",
+          type: "GET",
           data: { location : [41.25, -120.97] },
           dataType: 'json',
         }).done(function(data) {
           console.log('checkMessages success', data)
-        }).fail(function(data) {
+        }).fail(function(err) {
           console.log('checkMessages err', err)
         })
       }
 
       if (sendCreateNewRoom) {
-        var createNewRoom = $.ajax({
+        $.ajax({
           url: "http://127.0.0.1:3000/",
-          method: "POST",
-          data: { location : [41.25, -120.97] },
+          type: "POST",
+          data: { location : [1, 1] },
           dataType: 'json',
-        }).done(function(data) {
-          console.log('checkMessages success', data)
-        }).fail(function(data) {
-          console.log('checkMessages err', err)
+          success: function(data) {
+            console.log('sendCreateNewRoom success', data)
+          },
+          error: function(err) {
+            console.log('sendCreateNewRoom err', err)
+          },
         })        
       }
 
       if (sendAddNewMessage) {
-        var addNewMessage = $.ajax({
+        $.ajax({
           url: "http://127.0.0.1:3000/",
-          method: "PUT",
-          data: { location : [41.25, -120.97], message: 'hello' },
+          type: "PUT",
+          data: { location : [1, 1], message: 'Dubie' },
           dataType: 'json',
         }).done(function(data) {
-          console.log('checkMessages success', data)
-        }).fail(function(data) {
-          console.log('checkMessages err', err)
+          console.log('sendAddNewMessage success', data)
+        }).fail(function(err) {
+          console.log('sendAddNewMessage err', err)
         })        
       }
     }, requestInterval)
