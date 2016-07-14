@@ -21110,6 +21110,10 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _EnterCrumb = __webpack_require__(173);
+
+	var _CrumbFeed = __webpack_require__(174);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21121,20 +21125,61 @@
 	var App = function (_React$Component) {
 		_inherits(App, _React$Component);
 
-		function App() {
+		function App(props) {
 			_classCallCheck(this, App);
 
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(App).apply(this, arguments));
+			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(App).call(this, props));
+
+			_this.state = {
+				crumbs: ['hello', 'bread', 'crumbs'],
+				token: true
+			};
+
+			return _this;
 		}
 
 		_createClass(App, [{
+			key: 'handleClick',
+			value: function handleClick(e) {
+				this.setState({
+					token: !this.state.token
+				});
+			}
+		}, {
 			key: 'render',
 			value: function render() {
-				return _react2.default.createElement(
-					'div',
-					null,
-					'Hello'
-				);
+				if (this.state.token === true) {
+					return _react2.default.createElement(
+						'div',
+						null,
+						_react2.default.createElement(_EnterCrumb.EnterCrumb, null),
+						_react2.default.createElement(
+							'div',
+							null,
+							_react2.default.createElement(_CrumbFeed.CrumbFeed, { crumbs: this.state.crumbs })
+						),
+						_react2.default.createElement(
+							'button',
+							{ onClick: this.handleClick.bind(this) },
+							'test'
+						)
+					);
+				} else {
+					return _react2.default.createElement(
+						'div',
+						null,
+						_react2.default.createElement(
+							'h1',
+							null,
+							'Success'
+						),
+						_react2.default.createElement(
+							'button',
+							{ onClick: this.handleClick.bind(this) },
+							'test'
+						)
+					);
+				}
 			}
 		}]);
 
@@ -21142,6 +21187,170 @@
 	}(_react2.default.Component);
 
 	exports.default = App;
+
+/***/ },
+/* 173 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.EnterCrumb = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var EnterCrumb = exports.EnterCrumb = function (_React$Component) {
+		_inherits(EnterCrumb, _React$Component);
+
+		function EnterCrumb(props) {
+			_classCallCheck(this, EnterCrumb);
+
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(EnterCrumb).call(this, props));
+		}
+
+		_createClass(EnterCrumb, [{
+			key: "render",
+			value: function render() {
+				return _react2.default.createElement(
+					"div",
+					null,
+					_react2.default.createElement(
+						"form",
+						null,
+						_react2.default.createElement("input", {
+							type: "text",
+							placeholder: "Enter your crumb..."
+						})
+					)
+				);
+			}
+		}]);
+
+		return EnterCrumb;
+	}(_react2.default.Component);
+
+/***/ },
+/* 174 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.CrumbFeed = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _Crumb = __webpack_require__(175);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var CrumbFeed = exports.CrumbFeed = function (_React$Component) {
+		_inherits(CrumbFeed, _React$Component);
+
+		function CrumbFeed(props) {
+			_classCallCheck(this, CrumbFeed);
+
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(CrumbFeed).call(this, props));
+		}
+
+		_createClass(CrumbFeed, [{
+			key: 'render',
+			value: function render() {
+				return _react2.default.createElement(
+					'div',
+					null,
+					_react2.default.createElement(
+						'h1',
+						null,
+						'CRUMB FEED'
+					),
+					_react2.default.createElement(
+						'div',
+						null,
+						this.props.crumbs.map(function (crumb) {
+							return _react2.default.createElement(_Crumb.Crumb, { crumb: crumb });
+						})
+					)
+				);
+			}
+		}]);
+
+		return CrumbFeed;
+	}(_react2.default.Component);
+
+/***/ },
+/* 175 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.Crumb = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Crumb = exports.Crumb = function (_React$Component) {
+		_inherits(Crumb, _React$Component);
+
+		function Crumb(props) {
+			_classCallCheck(this, Crumb);
+
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(Crumb).call(this, props));
+		}
+
+		_createClass(Crumb, [{
+			key: 'render',
+			value: function render() {
+				return _react2.default.createElement(
+					'li',
+					null,
+					this.props.crumb
+				);
+			}
+		}]);
+
+		return Crumb;
+	}(_react2.default.Component);
 
 /***/ }
 /******/ ]);
