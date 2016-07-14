@@ -7,8 +7,7 @@ module.exports = {
   //if it exists will return an array of messages from db, if not, will return null
   getLocationMessages: function(req, res) {
     var location = req.query.location;
-    console.log('location ' , location);
-    console.log('location ' , typeof location);
+    console.log('getLocationMessages location ' , location);
     Token.findOne({location: location}, function(err, tokenData) {
       return new Promise(function(resolve, reject) {
         !err ? resolve(tokenData) : reject(err);
@@ -28,8 +27,6 @@ module.exports = {
 
   //function that inputs a {location: [long, lat], message: 'string'} object and pushes string into that token's messages array
   writeToToken: function(req, res) {
-    // req.body.location
-    // req.body.message
   console.log('writeToToken ' , req.query.location);
   console.log('writeToToken ' , req.query.message);
 

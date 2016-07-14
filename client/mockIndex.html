@@ -3,8 +3,59 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+  <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
 </head>
 <body>
+
+  <script>
+    var sendCheckMessages = true;
+    var sendCreateNewRoom = true;
+    var sendAddNewMessage = false;
+    var requestInterval = 5000;
+
+    window.setInterval(function() {
+      if (sendCheckMessages) {
+        var checkMessages = $.ajax({
+          url: "http://127.0.0.1:3000/",
+          method: "GET",
+          data: { location : [41.25, -120.97] },
+          dataType: 'json',
+        }).done(function(data) {
+          console.log('checkMessages success', data)
+        }).fail(function(data) {
+          console.log('checkMessages err', err)
+        })
+      }
+
+      if (sendCreateNewRoom) {
+        var createNewRoom = $.ajax({
+          url: "http://127.0.0.1:3000/",
+          method: "POST",
+          data: { location : [41.25, -120.97] },
+          dataType: 'json',
+        }).done(function(data) {
+          console.log('checkMessages success', data)
+        }).fail(function(data) {
+          console.log('checkMessages err', err)
+        })        
+      }
+
+      if (sendAddNewMessage) {
+        var addNewMessage = $.ajax({
+          url: "http://127.0.0.1:3000/",
+          method: "PUT",
+          data: { location : [41.25, -120.97], message: 'hello' },
+          dataType: 'json',
+        }).done(function(data) {
+          console.log('checkMessages success', data)
+        }).fail(function(data) {
+          console.log('checkMessages err', err)
+        })        
+      }
+    }, requestInterval)
+  </script>
+  <h2> these requests are depreciated ;) embedded scripts make simulate ajax requests </h2>
   <h2>Get request for checking for messages in a room</h2>
   <form action="http://127.0.0.1:3000/" method="GET">
     Location:<br>
