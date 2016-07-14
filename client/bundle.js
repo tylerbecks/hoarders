@@ -21132,17 +21132,55 @@
 
 			_this.state = {
 				crumbs: ['hello', 'bread', 'crumbs'],
-				token: true
+				token: true,
+				lat: 39.01,
+				lng: 140.21
 			};
 
 			return _this;
 		}
 
 		_createClass(App, [{
+			key: 'setPosition',
+			value: function setPosition(position) {
+				this.setState({
+					lat: position.coords.latitude,
+					lng: position.coords.longitude
+				});
+			}
+		}, {
+			key: 'error',
+			value: function error(err) {
+				console.log(err);
+			}
+		}, {
+			key: 'getLocation',
+			value: function getLocation() {
+				console.log(navigator.geolocation);
+				if (navigator.geolocation) {
+					navigator.geolocation.getCurrentPosition(this.setPosition, this.error);
+				} else {
+					console.log("geolocation not supported");
+				}
+			}
+		}, {
+			key: 'componentDidMount',
+			value: function componentDidMount() {
+				this.getLocation();
+				console.log('fire');
+			}
+		}, {
 			key: 'handleClick',
 			value: function handleClick(e) {
 				this.setState({
 					token: !this.state.token
+				});
+			}
+		}, {
+			key: 'AddCrumb',
+			value: function AddCrumb(crumb) {
+				this.setState({
+					crumbs: this.state.crumbs.concat([crumb])
 				});
 			}
 		}, {
@@ -21152,7 +21190,23 @@
 					return _react2.default.createElement(
 						'div',
 						null,
-						_react2.default.createElement(_EnterCrumb.EnterCrumb, null),
+						_react2.default.createElement(
+							'h1',
+							null,
+							'LAT ',
+							this.state.lat
+						),
+						_react2.default.createElement(
+							'h1',
+							null,
+							'LNG ',
+							this.state.lng
+						),
+						_react2.default.createElement(
+							'div',
+							null,
+							_react2.default.createElement(_EnterCrumb.EnterCrumb, { addCrumb: this.AddCrumb.bind(this) })
+						),
 						_react2.default.createElement(
 							'div',
 							null,
@@ -21161,7 +21215,7 @@
 						_react2.default.createElement(
 							'button',
 							{ onClick: this.handleClick.bind(this) },
-							'test'
+							'test '
 						)
 					);
 				} else {
@@ -21192,7 +21246,7 @@
 /* 173 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 		value: true
@@ -21219,22 +21273,44 @@
 		function EnterCrumb(props) {
 			_classCallCheck(this, EnterCrumb);
 
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(EnterCrumb).call(this, props));
+			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(EnterCrumb).call(this, props));
+
+			_this.state = {
+				value: ''
+			};
+			return _this;
 		}
 
 		_createClass(EnterCrumb, [{
-			key: "render",
+			key: 'handleCrumbChange',
+			value: function handleCrumbChange(e) {
+				this.setState({
+					value: e.target.value
+				});
+			}
+		}, {
+			key: 'render',
 			value: function render() {
+				var _this2 = this;
+
 				return _react2.default.createElement(
-					"div",
+					'div',
 					null,
 					_react2.default.createElement(
-						"form",
+						'div',
 						null,
-						_react2.default.createElement("input", {
-							type: "text",
-							placeholder: "Enter your crumb..."
-						})
+						_react2.default.createElement('input', { type: 'text', id: 'configname', name: 'configname', onChange: this.handleCrumbChange.bind(this) })
+					),
+					_react2.default.createElement(
+						'div',
+						null,
+						_react2.default.createElement(
+							'button',
+							{ type: 'button', onClick: function onClick() {
+									return _this2.props.addCrumb(_this2.state.value);
+								} },
+							' Try '
+						)
 					)
 				);
 			}

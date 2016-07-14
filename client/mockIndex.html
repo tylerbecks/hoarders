@@ -56,6 +56,20 @@
         })        
       }
     }, requestInterval)
+
+    var x = document.getElementById("demo");
+function getLocation() {
+  console.log('hit'); 
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else {
+        x.innerHTML = "Geolocation is not supported by this browser.";
+    }
+}
+function showPosition(position) {
+    x.innerHTML = "Latitude: " + position.coords.latitude + 
+    "<br>Longitude: " + position.coords.longitude; 
+}
   </script>
   <h2> these requests are depreciated ;) embedded scripts make simulate ajax requests </h2>
   <h2>Get request for checking for messages in a room</h2>
@@ -80,6 +94,12 @@
     <input type="submit" value="Submit">
   </form>
   <br>
+
+<p>Click the button to get your coordinates.</p>
+
+<button onclick="getLocation()">Try It</button>
+
+<p id="demo"></p>
 </body>
 </html>
 
