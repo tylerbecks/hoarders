@@ -1,6 +1,6 @@
-var Tokens = mongoose.schema({
+var Token = mongoose.schema({
   location: [Number],
   messages: [String],
 });
 
-module.exports = Tokens;
+module.exports = Token;
