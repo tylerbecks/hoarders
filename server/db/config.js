@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-mongoose.Promises = require('bluebird');
+mongoose.Promise = require('bluebird');
 
 // Create a new key on the module.exports so server.js can access the connection property from db.
 module.exports.connect = function() {

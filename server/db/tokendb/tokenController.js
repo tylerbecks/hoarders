@@ -7,6 +7,8 @@ module.exports = {
   //if it exists will return an array of messages from db, if not, will return null
   getLocationMessages: function(req, res) {
     var location = req.query.location;
+    console.log('location ' , location);
+    console.log('location ' , typeof location);
     Token.findOne({location: location}, function(err, tokenData) {
       return new Promise(function(resolve, reject) {
         !err ? resolve(tokenData) : reject(err);
