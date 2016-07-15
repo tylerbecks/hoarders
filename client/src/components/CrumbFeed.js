@@ -14,7 +14,7 @@ export class CrumbFeed extends React.Component {
 		<div>
 			<h1>CRUMB FEED</h1>
 			<div>
-				{this.props.crumbs.map((crumb) =>
+				{this.props.crumbs.reverse().map((crumb) =>
 				<Crumb crumb={crumb} />
 				)}
 			</div>

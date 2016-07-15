@@ -9,9 +9,9 @@
 <body>
 
   <script>
-    var sendCheckMessages = false;
+    var sendCheckMessages = true;
     var sendCreateNewRoom = false;
-    var sendAddNewMessage = true;
+    var sendAddNewMessage = false;
     var requestInterval = 2000;
 
     window.setInterval(function() {
@@ -57,19 +57,7 @@
       }
     }, requestInterval)
 
-    var x = document.getElementById("demo");
-function getLocation() {
-  console.log('hit'); 
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition);
-    } else {
-        x.innerHTML = "Geolocation is not supported by this browser.";
-    }
-}
-function showPosition(position) {
-    x.innerHTML = "Latitude: " + position.coords.latitude + 
-    "<br>Longitude: " + position.coords.longitude; 
-}
+    
   </script>
   <h2> these requests are depreciated ;) embedded scripts make simulate ajax requests </h2>
   <h2>Get request for checking for messages in a room</h2>
@@ -101,5 +89,18 @@ function showPosition(position) {
 
 <p id="demo"></p>
 </body>
+<script>var x = document.getElementById("demo");
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(showPosition);
+    } else {
+        x.innerHTML = "Geolocation is not supported by this browser.";
+    }
+}
+function showPosition(position) {
+    x.innerHTML = "Latitude: " + position.coords.latitude + 
+    "<br>Longitude: " + position.coords.longitude; 
+}
+</script>
 </html>
 

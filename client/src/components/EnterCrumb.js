@@ -9,6 +9,7 @@ export class EnterCrumb extends React.Component {
 	}
 
 	handleCrumbChange(e) {
+		console.log(e.target.value);
 		this.setState({
 			value: e.target.value
 		})

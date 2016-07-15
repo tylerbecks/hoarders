@@ -1,16 +1,14 @@
 var Token = require('./tokenModel.js');
-var Promise = require('bluebird');
+var mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
 
 module.exports = {
   //function takes in array of lat and long and will query database to see if a token exists in that location
   //if it exists will return an array of messages from db, if not, will return null
   getLocationMessages: function(req, res) {
     var location = req.query.location;
-    Token.findOne({location: location}, function(err, tokenData) {
-      return new Promise(function(resolve, reject) {
-        !err ? resolve(tokenData) : reject(err);
-      })
-    }).then(function(tokenData) {
+    Token.findOne({location: location})
+      .then(function(tokenData) {
       !tokenData ? res.send(null) : res.send(tokenData.messages);
     }).catch((err) => {
       console.log('getLocationMessages failed ', err)
@@ -40,11 +38,7 @@ module.exports = {
     var message = req.body.message;
     var tokenDataReturn = {};
 
-    Token.findOne({location: location}, function(err, tokenData) {
-      return new Promise(function(resolve, reject) {
-        !err ? resolve(tokenData) : reject(err);
-      })
-    }).then(function(tokenData) {
+    Token.findOne({location: location}).then(function(tokenData) {
       var newMessages = tokenData.messages;
       newMessages.push(message);
       tokenDataReturn.messages = newMessages;
