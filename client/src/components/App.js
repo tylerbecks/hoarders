@@ -7,10 +7,10 @@ class App extends React.Component {
 		super(props)
 		
 		this.state = {
-			crumbs: ['hello', 'bread', 'crumbs'],
+			crumbs: [],
 			token: true,
-			lat: 39.01,
-			lng: 140.21
+			lat: 0,
+			lng: 0
 		}
 
 	}
@@ -29,14 +29,14 @@ class App extends React.Component {
 	getLocation() {
 		console.log(navigator.geolocation);
 		if ( navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(this.setPosition, this.error);
+			navigator.geolocation.watchPosition(this.setPosition.bind(this), this.error);
 		} else {
 			console.log("geolocation not supported")
 		}
 	}
 
 
-	componentDidMount() {
+	componentWillMount() {
 		this.getLocation();
 		console.log('fire');
 
@@ -49,9 +49,22 @@ class App extends React.Component {
 	}
 
 	AddCrumb(crumb) {
-		this.setState({
-			crumbs: this.state.crumbs.concat([crumb])
-		});
+		var self = this;
+		$.ajax({
+          url: "http://127.0.0.1:3000/",
+          type: "PUT",
+          data: { location : [1, 1], message: crumb },
+          dataType: 'json',
+        }).done(function(data) {
+        	self.setState({
+        		crumbs: data.messages
+        	})
+          console.log('sendAddNewMessage success', data)
+        }).fail(function(err) {
+          console.log('sendAddNewMessage err', err)
+        })  
+
+		
 	}
 
 	render(){
