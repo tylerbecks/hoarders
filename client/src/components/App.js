@@ -7,7 +7,6 @@ import { OutOfChatRoom } from './OutOfChatRoom.js'
 import { EnterCrumb } from './EnterCrumb.js'
 import { CrumbFeed } from './CrumbFeed.js'
 
-
 class App extends React.Component {
 	constructor(props){
 		super(props)

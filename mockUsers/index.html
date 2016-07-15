@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+  <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCTm1OSmNG1CNC4jdC9HUv5-u45Oy0TWtk&v=3.exp"></script>
+  <script src="./app.js"></script>
+  <link rel="stylesheet" type="text/css" href="./style.css">
+</head>
+<body>
+  <h2>Crumbs demo simulator</h2>
+  <p>Current Location:</p>
+  <p id="usr">37.806674, -122.436440</p>
+  <br>
+  <form>
+    Location:<br>
+    <input id="loc" type="text" name="location"><br>
+    <input id="btn" type="submit" value="Submit">
+  </form>
+  <form>
+    Go to room: <input id="room" type="submit" name="location" value="37.806674, -122.436440"><br>
+    Leave the room: <input id="notroom" type="submit" value="37.906521, -122.437845">
+  </form>
+  <br>
+  <div id="map"> </div>
+</body>
+</html>
+
