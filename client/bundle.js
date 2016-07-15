@@ -21131,16 +21131,22 @@
 			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(App).call(this, props));
 
 			_this.state = {
+<<<<<<< f99a4fd2b90c9a0ebcfa7a031193dab17ac651c7
 				crumbs: [],
 				token: true,
 				lat: 0,
 				lng: 0
+=======
+				crumbs: ['hello', 'bread', 'crumbs'],
+				token: true
+>>>>>>> edit mockindex for testing
 			};
 
 			return _this;
 		}
 
 		_createClass(App, [{
+<<<<<<< f99a4fd2b90c9a0ebcfa7a031193dab17ac651c7
 			key: 'setPosition',
 			value: function setPosition(position) {
 				this.setState({
@@ -21170,6 +21176,8 @@
 				console.log('fire');
 			}
 		}, {
+=======
+>>>>>>> edit mockindex for testing
 			key: 'handleClick',
 			value: function handleClick(e) {
 				this.setState({
@@ -21177,6 +21185,7 @@
 				});
 			}
 		}, {
+<<<<<<< f99a4fd2b90c9a0ebcfa7a031193dab17ac651c7
 			key: 'AddCrumb',
 			value: function AddCrumb(crumb) {
 				var self = this;
@@ -21195,29 +21204,15 @@
 				});
 			}
 		}, {
+=======
+>>>>>>> edit mockindex for testing
 			key: 'render',
 			value: function render() {
 				if (this.state.token === true) {
 					return _react2.default.createElement(
 						'div',
 						null,
-						_react2.default.createElement(
-							'h1',
-							null,
-							'LAT ',
-							this.state.lat
-						),
-						_react2.default.createElement(
-							'h1',
-							null,
-							'LNG ',
-							this.state.lng
-						),
-						_react2.default.createElement(
-							'div',
-							null,
-							_react2.default.createElement(_EnterCrumb.EnterCrumb, { addCrumb: this.AddCrumb.bind(this) })
-						),
+						_react2.default.createElement(_EnterCrumb.EnterCrumb, null),
 						_react2.default.createElement(
 							'div',
 							null,
@@ -21226,7 +21221,7 @@
 						_react2.default.createElement(
 							'button',
 							{ onClick: this.handleClick.bind(this) },
-							'test '
+							'test'
 						)
 					);
 				} else {

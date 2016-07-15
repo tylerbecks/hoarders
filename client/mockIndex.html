@@ -57,7 +57,23 @@
       }
     }, requestInterval)
 
+<<<<<<< f99a4fd2b90c9a0ebcfa7a031193dab17ac651c7
     
+=======
+    var x = document.getElementById("demo");
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+      } else {
+        x.innerHTML = "Geolocation is not supported by this browser.";
+      }
+    }
+    function showPosition(position) {
+        x.innerHTML = "Latitude: " + position.coords.latitude + 
+        "<br>Longitude: " + position.coords.longitude; 
+        console.log(position.coords.latitude, position.coords.longitude)
+    }
+>>>>>>> edit mockindex for testing
   </script>
   <h2> these requests are depreciated ;) embedded scripts make simulate ajax requests </h2>
   <h2>Get request for checking for messages in a room</h2>

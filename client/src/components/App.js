@@ -71,15 +71,11 @@ class App extends React.Component {
 		if ( this.state.token === true ) {
 		return (
 		  <div>
-		  	<h1>LAT {this.state.lat}</h1>
-		  	<h1>LNG {this.state.lng}</h1>
-		  	<div>
-		  	<EnterCrumb addCrumb={this.AddCrumb.bind(this)} />
-		  	</div>
+		  	<EnterCrumb />
 		  	<div>
 		  	<CrumbFeed crumbs={this.state.crumbs} />
 		  	</div>
-		  	<button onClick={this.handleClick.bind(this)}>test </button>
+		  	<button onClick={this.handleClick.bind(this)}>test</button>
 		  </div>
 		);
 		} else {
