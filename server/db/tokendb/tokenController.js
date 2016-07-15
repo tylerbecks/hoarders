@@ -3,15 +3,13 @@ var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 
 module.exports = {
+  
   //function takes in array of lat and long and will query database to see if a token exists in that location
   //if it exists will return an array of messages from db, if not, will return null
   getLocationMessages: function(req, res) {
     var location = req.query.location;
-    Token.findOne({location: location})
-      .then(function(tokenData) {
-      !tokenData ? res.send(null) : res.send(tokenData.messages);
-    }).catch((err) => {
-      console.log('getLocationMessages failed ', err)
+    Token.findOne({location: location}, function(err, tokenData) {
+      !tokenData ? res.send({location: location, messages: null}) : res.send(tokenData);
     })
   },
 
@@ -20,7 +18,7 @@ module.exports = {
     var location = req.body.location;
     new Token({
       location: location,
-      messages: []
+      messages: [],
     }).save((err, data) => {
       return new Promise((resolve, reject) => {
         !err ? resolve(data) : reject(err); 
@@ -37,8 +35,7 @@ module.exports = {
     var location = req.body.location;
     var message = req.body.message;
     var tokenDataReturn = {};
-
-    Token.findOne({location: location}).then(function(tokenData) {
+    Token.findOne({location: location}, function(err, tokenData) {
       var newMessages = tokenData.messages;
       newMessages.push(message);
       tokenDataReturn.messages = newMessages;

@@ -21116,11 +21116,7 @@
 
 	var _ChatRoom = __webpack_require__(174);
 
-	var _OutOfChatRoom = __webpack_require__(177);
-
-	var _EnterCrumb = __webpack_require__(178);
-
-	var _CrumbFeed = __webpack_require__(179);
+	var _OutOfChatRoom = __webpack_require__(178);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21140,8 +21136,7 @@
 
 			_this.state = {
 				messages: null,
-				lat: 0,
-				lon: 0
+				location: "37.7837-122.4090"
 			};
 			return _this;
 		}
@@ -21149,7 +21144,8 @@
 		_createClass(App, [{
 			key: 'componentWillMount',
 			value: function componentWillMount() {
-				this.getLocation();
+				this.checkIfInChatRoom();
+				setInterval(this.getLocation.bind(this), 500);
 			}
 
 			//will watch our location and frequently call set position
@@ -21158,7 +21154,7 @@
 			key: 'getLocation',
 			value: function getLocation() {
 				if (navigator.geolocation) {
-					navigator.geolocation.watchPosition(this.setPosition.bind(this), this.error);
+					navigator.geolocation.getCurrentPosition(this.setPosition.bind(this), this.error);
 				} else {
 					console.log("geolocation not supported");
 				}
@@ -21169,10 +21165,15 @@
 		}, {
 			key: 'setPosition',
 			value: function setPosition(position) {
+				var latRound = position.coords.latitude.toFixed(3);
+				var lonRound = position.coords.longitude.toFixed(3);
+				var location = latRound.toString() + lonRound.toString();
+
 				this.setState({
-					lat: position.coords.latitude,
-					lon: position.coords.longitude
+					location: location
 				});
+				console.log('Position updated, ', this.state);
+				this.checkIfInChatRoom();
 			}
 
 			//sends reqest with our location to server and will set App.state.messages null (not in chatroom) or an array of messages (in chatroom)
@@ -21182,9 +21183,9 @@
 			value: function checkIfInChatRoom() {
 				var self = this;
 				_jquery2.default.ajax({
-					url: "http://127.0.0.1:3000/",
+					url: "http://127.0.0.1:3000/location",
 					type: "GET",
-					data: { location: [this.state.lat, this.state.lon] },
+					data: { location: this.state.location },
 					dataType: 'json'
 				}).done(function (data) {
 					console.log('checkMessages success', data);
@@ -21201,21 +21202,17 @@
 		}, {
 			key: 'createNewChatRoom',
 			value: function createNewChatRoom() {
-				console.log('[this.state.lat, this.state.lon] ', [this.state.lat, this.state.lon]);
 				var self = this;
 				_jquery2.default.ajax({
 					url: "http://127.0.0.1:3000/",
 					type: "POST",
-					data: { location: [this.state.lat, this.state.lon] },
+					data: { location: this.state.location },
 					dataType: 'json',
 					success: function success(data) {
 						console.log('sendCreateNewRoom success', data);
-						console.log('should return empty array', self.state.messages);
-						console.log('data ', data.messages);
 						self.setState({
 							messages: data.messages
 						});
-						console.log('still working');
 					},
 					error: function error(err) {
 						console.log('sendCreateNewRoom err', err);
@@ -21232,7 +21229,7 @@
 				_jquery2.default.ajax({
 					url: "http://127.0.0.1:3000/",
 					type: "PUT",
-					data: { location: [this.state.lat, this.state.lon], message: message },
+					data: { location: this.state.location, message: message },
 					dataType: 'json'
 				}).done(function (data) {
 					self.setState({
@@ -21248,7 +21245,6 @@
 			value: function render() {
 				var childToRender;
 				var isInRoom = !!this.state.messages;
-				// var isInRoom = false
 
 				childToRender = isInRoom ? _react2.default.createElement(_ChatRoom.ChatRoom, {
 					messages: this.state.messages,
@@ -31468,7 +31464,14 @@
 	      this.setState({
 	        message: e.target.value
 	      });
-	      console.log('this.state.message ', this.state.message);
+	    }
+	  }, {
+	    key: 'handleSubmit',
+	    value: function handleSubmit() {
+	      this.props.addMessageToChatRoom(this.state.message);
+	      this.setState({
+	        message: ''
+	      });
 	    }
 	  }, {
 	    key: 'render',
@@ -31476,7 +31479,12 @@
 	      return _react2.default.createElement(
 	        'div',
 	        null,
-	        _react2.default.createElement('input', { onChange: this.handleInputChange.bind(this), placeholder: 'enter new message', type: 'text', value: this.state.message })
+	        _react2.default.createElement('input', { onChange: this.handleInputChange.bind(this), placeholder: 'enter new message', type: 'text', value: this.state.message }),
+	        _react2.default.createElement(
+	          'button',
+	          { onClick: this.handleSubmit.bind(this) },
+	          'Add message'
+	        )
 	      );
 	    }
 	  }]);
@@ -31499,7 +31507,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _MessageListEntry = __webpack_require__(181);
+	var _MessageListEntry = __webpack_require__(177);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -31516,6 +31524,32 @@
 
 /***/ },
 /* 177 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.MessageListEntry = undefined;
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var MessageListEntry = exports.MessageListEntry = function MessageListEntry(_ref) {
+	  var message = _ref.message;
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    message
+	  );
+	};
+
+/***/ },
+/* 178 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -31539,219 +31573,6 @@
 	      null,
 	      "Out of chat room footer"
 	    )
-	  );
-	};
-
-/***/ },
-/* 178 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.EnterCrumb = undefined;
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var EnterCrumb = exports.EnterCrumb = function (_React$Component) {
-		_inherits(EnterCrumb, _React$Component);
-
-		function EnterCrumb(props) {
-			_classCallCheck(this, EnterCrumb);
-
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(EnterCrumb).call(this, props));
-
-			_this.state = {
-				value: ''
-			};
-			return _this;
-		}
-
-		_createClass(EnterCrumb, [{
-			key: 'handleCrumbChange',
-			value: function handleCrumbChange(e) {
-				console.log(e.target.value);
-				this.setState({
-					value: e.target.value
-				});
-			}
-		}, {
-			key: 'render',
-			value: function render() {
-				var _this2 = this;
-
-				return _react2.default.createElement(
-					'div',
-					null,
-					_react2.default.createElement(
-						'div',
-						null,
-						_react2.default.createElement('input', { type: 'text', id: 'configname', name: 'configname', onChange: this.handleCrumbChange.bind(this) })
-					),
-					_react2.default.createElement(
-						'div',
-						null,
-						_react2.default.createElement(
-							'button',
-							{ type: 'button', onClick: function onClick() {
-									return _this2.props.addCrumb(_this2.state.value);
-								} },
-							' Try '
-						)
-					)
-				);
-			}
-		}]);
-
-		return EnterCrumb;
-	}(_react2.default.Component);
-
-/***/ },
-/* 179 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.CrumbFeed = undefined;
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _Crumb = __webpack_require__(180);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var CrumbFeed = exports.CrumbFeed = function (_React$Component) {
-		_inherits(CrumbFeed, _React$Component);
-
-		function CrumbFeed(props) {
-			_classCallCheck(this, CrumbFeed);
-
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(CrumbFeed).call(this, props));
-		}
-
-		_createClass(CrumbFeed, [{
-			key: 'render',
-			value: function render() {
-				return _react2.default.createElement(
-					'div',
-					null,
-					_react2.default.createElement(
-						'h1',
-						null,
-						'CRUMB FEED'
-					),
-					_react2.default.createElement(
-						'div',
-						null,
-						this.props.crumbs.reverse().map(function (crumb) {
-							return _react2.default.createElement(_Crumb.Crumb, { crumb: crumb });
-						})
-					)
-				);
-			}
-		}]);
-
-		return CrumbFeed;
-	}(_react2.default.Component);
-
-/***/ },
-/* 180 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.Crumb = undefined;
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var Crumb = exports.Crumb = function (_React$Component) {
-		_inherits(Crumb, _React$Component);
-
-		function Crumb(props) {
-			_classCallCheck(this, Crumb);
-
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(Crumb).call(this, props));
-		}
-
-		_createClass(Crumb, [{
-			key: 'render',
-			value: function render() {
-				return _react2.default.createElement(
-					'li',
-					null,
-					this.props.crumb
-				);
-			}
-		}]);
-
-		return Crumb;
-	}(_react2.default.Component);
-
-/***/ },
-/* 181 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.MessageListEntry = undefined;
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var MessageListEntry = exports.MessageListEntry = function MessageListEntry(_ref) {
-	  var message = _ref.message;
-	  return _react2.default.createElement(
-	    'div',
-	    null,
-	    message
 	  );
 	};
 
