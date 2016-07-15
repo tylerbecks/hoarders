@@ -21,8 +21,6 @@ $(document).ready(function() {
   updateMapLocation(37.8049, -122.4194)
   var location = [37.7749, -122.4194]
 
-
-
   $('#btn').on('click', function(e) {
     e.preventDefault()
     location = $('#loc').val().split(/,\s*/);
@@ -45,3 +43,7 @@ $(document).ready(function() {
     updateMapLocation(location[0], location[1]);
   })
 })
+
+module.exports.location = function() {
+  return location;
+}

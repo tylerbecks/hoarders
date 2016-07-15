@@ -14,7 +14,7 @@ class App extends React.Component {
 		this.state = {
 			messages: null,
 			lat: 0,
-			long: 0,
+			lon: 0,
 		}
 	}
 
@@ -35,9 +35,8 @@ class App extends React.Component {
 	setPosition(position) {
 		this.setState({
 			lat: position.coords.latitude,
-			lng: position.coords.longitude
+			lon: position.coords.longitude
 		})
-		this.checkIfInChatRoom()
 	}
 
 	//sends reqest with our location to server and will set App.state.messages null (not in chatroom) or an array of messages (in chatroom)
@@ -46,7 +45,7 @@ class App extends React.Component {
 		$.ajax({
 		  url: "http://127.0.0.1:3000/",
 		  type: "GET",
-		  data: { location : [this.state.lat, this.state.long] },
+		  data: { location : [this.state.lat, this.state.lon] },
 		  dataType: 'json',
 		}).done(function(data) {
 		  console.log('checkMessages success', data)
@@ -60,17 +59,21 @@ class App extends React.Component {
 
 	//sends a request with our location to server and return message will have an empty array which indicates and empty chat room
 	createNewChatRoom() {
+	  console.log('[this.state.lat, this.state.lon] ' , [this.state.lat, this.state.lon]);
 		var self = this;
 		$.ajax({
 		  url: "http://127.0.0.1:3000/",
 		  type: "POST",
-		  data: { location : [this.state.lat, this.state.long] },
+		  data: { location : [this.state.lat, this.state.lon] },
 		  dataType: 'json',
 		  success: function(data) {
 		    console.log('sendCreateNewRoom success', data)
+	    	console.log('should return empty array', self.state.messages);
+		    console.log('data ' , data.messages);
 		    self.setState({
 		    	messages: data.messages
 		    })
+		    console.log('still working')
 		  },
 		  error: function(err) {
 		    console.log('sendCreateNewRoom err', err)
@@ -84,7 +87,7 @@ class App extends React.Component {
 		$.ajax({
       url: "http://127.0.0.1:3000/",
       type: "PUT",
-      data: { location : [this.state.lat, this.state.long], message: message },
+      data: { location : [this.state.lat, this.state.lon], message: message },
       dataType: 'json',
     }).done(function(data) {
     	self.setState({
@@ -98,9 +101,10 @@ class App extends React.Component {
 
 	render() {
 		var childToRender;
-		var isInToken = !!this.state.messages;
+		var isInRoom = !!this.state.messages;
+		// var isInRoom = false
 
-		childToRender = isInToken
+		childToRender = isInRoom	
 			? (<ChatRoom
 					messages={this.state.messages}
 					addMessageToChatRoom={this.addMessageToChatRoom.bind(this)}

@@ -21114,13 +21114,13 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _ChatRoom = __webpack_require__(179);
+	var _ChatRoom = __webpack_require__(174);
 
-	var _OutOfChatRoom = __webpack_require__(180);
+	var _OutOfChatRoom = __webpack_require__(177);
 
-	var _EnterCrumb = __webpack_require__(176);
+	var _EnterCrumb = __webpack_require__(178);
 
-	var _CrumbFeed = __webpack_require__(177);
+	var _CrumbFeed = __webpack_require__(179);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21141,7 +21141,7 @@
 			_this.state = {
 				messages: null,
 				lat: 0,
-				long: 0
+				lon: 0
 			};
 			return _this;
 		}
@@ -21171,9 +21171,8 @@
 			value: function setPosition(position) {
 				this.setState({
 					lat: position.coords.latitude,
-					lng: position.coords.longitude
+					lon: position.coords.longitude
 				});
-				this.checkIfInChatRoom();
 			}
 
 			//sends reqest with our location to server and will set App.state.messages null (not in chatroom) or an array of messages (in chatroom)
@@ -21185,7 +21184,7 @@
 				_jquery2.default.ajax({
 					url: "http://127.0.0.1:3000/",
 					type: "GET",
-					data: { location: [this.state.lat, this.state.long] },
+					data: { location: [this.state.lat, this.state.lon] },
 					dataType: 'json'
 				}).done(function (data) {
 					console.log('checkMessages success', data);
@@ -21202,17 +21201,21 @@
 		}, {
 			key: 'createNewChatRoom',
 			value: function createNewChatRoom() {
+				console.log('[this.state.lat, this.state.lon] ', [this.state.lat, this.state.lon]);
 				var self = this;
 				_jquery2.default.ajax({
 					url: "http://127.0.0.1:3000/",
 					type: "POST",
-					data: { location: [this.state.lat, this.state.long] },
+					data: { location: [this.state.lat, this.state.lon] },
 					dataType: 'json',
 					success: function success(data) {
 						console.log('sendCreateNewRoom success', data);
+						console.log('should return empty array', self.state.messages);
+						console.log('data ', data.messages);
 						self.setState({
 							messages: data.messages
 						});
+						console.log('still working');
 					},
 					error: function error(err) {
 						console.log('sendCreateNewRoom err', err);
@@ -21229,7 +21232,7 @@
 				_jquery2.default.ajax({
 					url: "http://127.0.0.1:3000/",
 					type: "PUT",
-					data: { location: [this.state.lat, this.state.long], message: message },
+					data: { location: [this.state.lat, this.state.lon], message: message },
 					dataType: 'json'
 				}).done(function (data) {
 					self.setState({
@@ -21244,9 +21247,10 @@
 			key: 'render',
 			value: function render() {
 				var childToRender;
-				var isInToken = !!this.state.messages;
+				var isInRoom = !!this.state.messages;
+				// var isInRoom = false
 
-				childToRender = isInToken ? _react2.default.createElement(_ChatRoom.ChatRoom, {
+				childToRender = isInRoom ? _react2.default.createElement(_ChatRoom.ChatRoom, {
 					messages: this.state.messages,
 					addMessageToChatRoom: this.addMessageToChatRoom.bind(this)
 				}) : _react2.default.createElement(_OutOfChatRoom.OutOfChatRoom, {
@@ -31357,9 +31361,189 @@
 
 
 /***/ },
-/* 174 */,
-/* 175 */,
+/* 174 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.ChatRoom = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _AddMessage = __webpack_require__(175);
+
+	var _MessageList = __webpack_require__(176);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var ChatRoom = exports.ChatRoom = function (_React$Component) {
+	  _inherits(ChatRoom, _React$Component);
+
+	  function ChatRoom(props) {
+	    _classCallCheck(this, ChatRoom);
+
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(ChatRoom).call(this, props));
+	  }
+
+	  _createClass(ChatRoom, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          'h1',
+	          null,
+	          'Chat Room component'
+	        ),
+	        _react2.default.createElement(_AddMessage.AddMessage, { addMessageToChatRoom: this.props.addMessageToChatRoom }),
+	        _react2.default.createElement(_MessageList.MessageList, { messages: this.props.messages }),
+	        _react2.default.createElement(
+	          'h2',
+	          null,
+	          'Chat Room footer'
+	        )
+	      );
+	    }
+	  }]);
+
+	  return ChatRoom;
+	}(_react2.default.Component);
+
+/***/ },
+/* 175 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.AddMessage = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var AddMessage = exports.AddMessage = function (_React$Component) {
+	  _inherits(AddMessage, _React$Component);
+
+	  function AddMessage(props) {
+	    _classCallCheck(this, AddMessage);
+
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AddMessage).call(this, props));
+
+	    _this.state = {
+	      message: ''
+	    };
+	    return _this;
+	  }
+
+	  _createClass(AddMessage, [{
+	    key: 'handleInputChange',
+	    value: function handleInputChange(e) {
+	      this.setState({
+	        message: e.target.value
+	      });
+	      console.log('this.state.message ', this.state.message);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement('input', { onChange: this.handleInputChange.bind(this), placeholder: 'enter new message', type: 'text', value: this.state.message })
+	      );
+	    }
+	  }]);
+
+	  return AddMessage;
+	}(_react2.default.Component);
+
+/***/ },
 /* 176 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.MessageList = undefined;
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _MessageListEntry = __webpack_require__(181);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var MessageList = exports.MessageList = function MessageList(_ref) {
+	  var messages = _ref.messages;
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    messages.map(function (message) {
+	      return _react2.default.createElement(_MessageListEntry.MessageListEntry, { message: message });
+	    })
+	  );
+	};
+
+/***/ },
+/* 177 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var OutOfChatRoom = exports.OutOfChatRoom = function OutOfChatRoom(_ref) {
+	  var createNewChatRoom = _ref.createNewChatRoom;
+	  return React.createElement(
+	    "div",
+	    null,
+	    React.createElement(
+	      "h2",
+	      null,
+	      "Out of chat room header"
+	    ),
+	    React.createElement("button", { onClick: createNewChatRoom }),
+	    React.createElement(
+	      "h2",
+	      null,
+	      "Out of chat room footer"
+	    )
+	  );
+	};
+
+/***/ },
+/* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -31437,7 +31621,7 @@
 	}(_react2.default.Component);
 
 /***/ },
-/* 177 */
+/* 179 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -31453,7 +31637,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Crumb = __webpack_require__(178);
+	var _Crumb = __webpack_require__(180);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -31498,7 +31682,7 @@
 	}(_react2.default.Component);
 
 /***/ },
-/* 178 */
+/* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -31546,7 +31730,7 @@
 	}(_react2.default.Component);
 
 /***/ },
-/* 179 */
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -31554,9 +31738,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.ChatRoom = undefined;
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	exports.MessageListEntry = undefined;
 
 	var _react = __webpack_require__(1);
 
@@ -31564,60 +31746,12 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var ChatRoom = exports.ChatRoom = function (_React$Component) {
-	  _inherits(ChatRoom, _React$Component);
-
-	  function ChatRoom(props) {
-	    _classCallCheck(this, ChatRoom);
-
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(ChatRoom).call(this, props));
-	  }
-
-	  _createClass(ChatRoom, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'h1',
-	        null,
-	        'Chat Room component'
-	      );
-	    }
-	  }]);
-
-	  return ChatRoom;
-	}(_react2.default.Component);
-
-/***/ },
-/* 180 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var OutOfChatRoom = exports.OutOfChatRoom = function OutOfChatRoom(_ref) {
-	  var createNewChatRoom = _ref.createNewChatRoom;
-	  return React.createElement(
-	    "div",
+	var MessageListEntry = exports.MessageListEntry = function MessageListEntry(_ref) {
+	  var message = _ref.message;
+	  return _react2.default.createElement(
+	    'div',
 	    null,
-	    React.createElement(
-	      "h2",
-	      null,
-	      "Out of chat room header"
-	    ),
-	    React.createElement("button", { onClick: createNewChatRoom.bind(undefined) }),
-	    React.createElement(
-	      "h2",
-	      null,
-	      "Out of chat room footer"
-	    )
+	    message
 	  );
 	};
 
