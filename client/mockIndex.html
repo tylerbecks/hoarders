@@ -9,7 +9,7 @@
 <body>
 
   <script>
-    var sendCheckMessages = true;
+    var sendCheckMessages = false;
     var sendCreateNewRoom = false;
     var sendAddNewMessage = false;
     var requestInterval = 2000;
@@ -57,50 +57,8 @@
       }
     }, requestInterval)
 
-    
   </script>
-  <h2> these requests are depreciated ;) embedded scripts make simulate ajax requests </h2>
-  <h2>Get request for checking for messages in a room</h2>
-  <form action="http://127.0.0.1:3000/" method="GET">
-    Location:<br>
-    <input type="json" name="location"><br>
-    <input type="submit" value="Submit">
-  </form>
-  <br>
-  <h2>Post request for creating new room</h2>
-  <form action="http://127.0.0.1:3000/" method="POST">
-    Location:<br>
-    <input type="text" name="location"><br>
-    Message:<br>
-    <input type="text" name="message"><br>
-    <input type="submit" value="Submit">
-  </form>
-  <h2>Put request for adding a message to a room </h2>
-  <form action="http://127.0.0.1:3000/" method="PUT">
-    Location:<br>
-    <input type="json" name="location"><br>
-    <input type="submit" value="Submit">
-  </form>
-  <br>
-
-<p>Click the button to get your coordinates.</p>
-
-<button onclick="getLocation()">Try It</button>
-
-<p id="demo"></p>
+  
 </body>
-<script>var x = document.getElementById("demo");
-function getLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.watchPosition(showPosition);
-    } else {
-        x.innerHTML = "Geolocation is not supported by this browser.";
-    }
-}
-function showPosition(position) {
-    x.innerHTML = "Latitude: " + position.coords.latitude + 
-    "<br>Longitude: " + position.coords.longitude; 
-}
-</script>
 </html>
 

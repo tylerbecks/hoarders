@@ -15,10 +15,6 @@ export class EnterCrumb extends React.Component {
 		})
 	}
 
-
-
-
-
 	render() {
 		return (
 	    <div>
