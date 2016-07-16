@@ -1,5 +1,5 @@
-var updateMapLocation = function(lat, long) {
-  var googlePos = new google.maps.LatLng(lat, long);
+var updateMapLocation = function(location) {
+  var googlePos = new google.maps.LatLng(location.lat, location.lon);
   var mapOptions = {
     zoom : 13,
     center : googlePos,
@@ -17,33 +17,39 @@ var updateMapLocation = function(lat, long) {
   var googleMarker = new google.maps.Marker(markerOpt);
 }
 
+var updateServerLocation = function(location) {
+  $.ajax({
+    url: "http://127.0.0.1:8000/location",
+    type: "POST",
+    data: { location : location },
+    dataType: 'json',
+    error: function(err) {
+      console.log('sendCreateNewRoom err', err)
+    },
+  })
+}
+
 $(document).ready(function() {
-  updateMapLocation(37.8049, -122.4194)
-  var location = [37.7749, -122.4194]
+  var location = {lat: 37.8049, lon: -122.4194};
+  updateMapLocation(location)
+  updateServerLocation(location)
 
   $('#btn').on('click', function(e) {
     e.preventDefault()
-    location = $('#loc').val().split(/,\s*/);
-    $('#usr').text(location);
+    location.lat = $('#loc').val().split(/,\s*/)[0];
+    location.lon = $('#loc').val().split(/,\s*/)[1];
+    $('#usr').text(location.lat + ', ' + location.lon);
     $('#loc').val('');
-    updateMapLocation(location[0], location[1]);
+    updateMapLocation(location)
+    updateServerLocation(location)
   })
 
-  $('#room').on('click', function(e) {
+  $('.spot').on('click', function(e) {
     e.preventDefault()
-    location = this.value.split(/,\s*/);
-    $('#usr').text(location);
-    updateMapLocation(location[0], location[1]);
-  })
-
-  $('#notroom').on('click', function(e) {
-    e.preventDefault()
-    location = this.value.split(/,\s*/);
-    $('#usr').text(location);
-    updateMapLocation(location[0], location[1]);
+    location.lat = this.value.split(/,\s*/)[0];
+    location.lon = this.value.split(/,\s*/)[1];
+    $('#usr').text(location.lat + ', ' + location.lon);
+    updateMapLocation(location)
+    updateServerLocation(location)
   })
 })
-
-module.exports.location = function() {
-  return location;
-}

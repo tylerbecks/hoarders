@@ -21136,7 +21136,8 @@
 
 			_this.state = {
 				messages: null,
-				location: "37.7837-122.4090"
+				location: "37.7837-122.4090",
+				demoMode: false
 			};
 			return _this;
 		}
@@ -21145,7 +21146,31 @@
 			key: 'componentWillMount',
 			value: function componentWillMount() {
 				this.checkIfInChatRoom();
-				setInterval(this.getLocation.bind(this), 500);
+				if (this.state.demoMode) {
+					setInterval(this.getDemoLocation.bind(this), 500);
+				} else {
+					setInterval(this.getLocation.bind(this), 500);
+				}
+			}
+		}, {
+			key: 'getDemoLocation',
+			value: function getDemoLocation() {
+				var self = this;
+				var position = {};
+				position.coords = {};
+				_jquery2.default.ajax({
+					url: "http://127.0.0.1:8000/demo",
+					type: "GET",
+					data: { location: this.state.location },
+					dataType: 'json'
+				}).done(function (data) {
+					position.coords.latitude = data.lat;
+					position.coords.longitude = data.lon;
+					console.log('position', position);
+					self.setPosition(position);
+				}).fail(function (err) {
+					console.log('checkMessages err', err);
+				});
 			}
 
 			//will watch our location and frequently call set position
@@ -21168,11 +21193,9 @@
 				var latRound = position.coords.latitude.toFixed(3);
 				var lonRound = position.coords.longitude.toFixed(3);
 				var location = latRound.toString() + lonRound.toString();
-
 				this.setState({
 					location: location
 				});
-				console.log('Position updated, ', this.state);
 				this.checkIfInChatRoom();
 			}
 
@@ -21188,7 +21211,6 @@
 					data: { location: this.state.location },
 					dataType: 'json'
 				}).done(function (data) {
-					console.log('checkMessages success', data);
 					self.setState({
 						messages: data.messages
 					});
@@ -21209,7 +21231,6 @@
 					data: { location: this.state.location },
 					dataType: 'json',
 					success: function success(data) {
-						console.log('sendCreateNewRoom success', data);
 						self.setState({
 							messages: data.messages
 						});
@@ -21235,7 +21256,6 @@
 					self.setState({
 						messages: data.messages
 					});
-					console.log('sendAddNewMessage success', data);
 				}).fail(function (err) {
 					console.log('sendAddNewMessage err', err);
 				});
