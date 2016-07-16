@@ -1,6 +1,8 @@
 import $ from 'jquery';
 import React from 'react';
 
+import { Jumbotron } from 'react-bootstrap';
+
 import { ChatRoom } from './ChatRoom.js'
 import { OutOfChatRoom } from './OutOfChatRoom.js'
 
@@ -11,7 +13,7 @@ class App extends React.Component {
 		this.state = {
 			messages: null,
 			location: "37.7837-122.4090",
-			demoMode: false,
+			demoMode: true,
 		}
 	}
 
@@ -36,7 +38,6 @@ class App extends React.Component {
 		}).done(function(data) {
 			position.coords.latitude = data.lat;
 			position.coords.longitude = data.lon;
-			console.log('position', position)
 			self.setPosition(position);
 		}).fail(function(err) {
 		  console.log('checkMessages err', err)
@@ -129,11 +130,27 @@ class App extends React.Component {
 				  createNewChatRoom={this.createNewChatRoom.bind(this)}
 				/>);
 
+		let appStyle = {
+		  margin: 'auto auto',
+		  width: '80%',
+		  height: '100%',
+		  border: '1px solid black',
+		  padding: '7%',
+		  textAlign: 'center',
+		  background: '#CCC',
+		}
+
+		let jumboStyle = {
+			border: '1px solid black',
+		}
+
 		return (
-			<div>
-				<h1>Crumbs Header here</h1>
+			<div style={appStyle}>
+				<Jumbotron style={jumboStyle}>
+					<h1>crumbs</h1>
+					<p>your local chatroom</p>
+				</Jumbotron>
 				{childToRender}
-				<h3>Crumbs Footer here</h3>
 			</div>
 		);
 	}

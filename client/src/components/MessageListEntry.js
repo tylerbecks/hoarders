@@ -1,7 +1,7 @@
 import React from 'react';
 
+import { Panel, ListGroupItem } from 'react-bootstrap';
+
 export let MessageListEntry = ({message}) => (
-  <div>
-    {message}
-  </div>
+  <ListGroupItem> { message } </ListGroupItem>
 )

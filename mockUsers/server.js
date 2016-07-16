@@ -17,7 +17,6 @@ app.use(express.static(__dirname));
 app.post('/location', function(req, res) {
   location.lat = Number(req.body.location.lat)
   location.lon = Number(req.body.location.lon)
-  console.log(location)
   res.send(location);
 })
 
