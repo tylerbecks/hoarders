@@ -1,11 +1,10 @@
 import $ from 'jquery';
 import React from 'react';
 
+import { Jumbotron } from 'react-bootstrap';
+
 import { ChatRoom } from './ChatRoom.js'
 import { OutOfChatRoom } from './OutOfChatRoom.js'
-
-import { EnterCrumb } from './EnterCrumb.js'
-import { CrumbFeed } from './CrumbFeed.js'
 
 class App extends React.Component {
 	constructor(props){
@@ -13,19 +12,42 @@ class App extends React.Component {
 		
 		this.state = {
 			messages: null,
-			lat: 0,
-			lon: 0,
+			location: "37.7837-122.4090",
+			demoMode: true,
 		}
 	}
 
 	componentWillMount() {
-		this.getLocation();
+		this.checkIfInChatRoom()
+		if (this.state.demoMode) {
+			setInterval(this.getDemoLocation.bind(this), 500)
+		} else {
+			setInterval(this.getLocation.bind(this), 500);
+		}
+	}
+
+	getDemoLocation() {
+		var self = this;
+		var position = {};
+		position.coords = {};
+		$.ajax({
+		  url: "http://127.0.0.1:8000/demo",
+		  type: "GET",
+		  data: { location : this.state.location },
+		  dataType: 'json',
+		}).done(function(data) {
+			position.coords.latitude = data.lat;
+			position.coords.longitude = data.lon;
+			self.setPosition(position);
+		}).fail(function(err) {
+		  console.log('checkMessages err', err)
+		})
 	}
 
 	//will watch our location and frequently call set position
 	getLocation() {
 		if ( navigator.geolocation ) {
-			navigator.geolocation.watchPosition(this.setPosition.bind(this), this.error);
+			navigator.geolocation.getCurrentPosition(this.setPosition.bind(this), this.error);
 		} else {
 			console.log("geolocation not supported")
 		}
@@ -33,22 +55,24 @@ class App extends React.Component {
 
 	//will continulally update our location state with our new position returned form navigator.geolocation and check if we are in chat room
 	setPosition(position) {
+		var latRound = position.coords.latitude.toFixed(3)
+		var lonRound = position.coords.longitude.toFixed(3)
+		var location = latRound.toString() + lonRound.toString()
 		this.setState({
-			lat: position.coords.latitude,
-			lon: position.coords.longitude
+			location: location,
 		})
+		this.checkIfInChatRoom()
 	}
 
 	//sends reqest with our location to server and will set App.state.messages null (not in chatroom) or an array of messages (in chatroom)
 	checkIfInChatRoom() {
 		var self = this;
 		$.ajax({
-		  url: "http://127.0.0.1:3000/",
+		  url: "http://127.0.0.1:3000/location",
 		  type: "GET",
-		  data: { location : [this.state.lat, this.state.lon] },
+		  data: { location : this.state.location },
 		  dataType: 'json',
 		}).done(function(data) {
-		  console.log('checkMessages success', data)
 		  self.setState({
 		  	messages: data.messages
 		  })
@@ -59,21 +83,16 @@ class App extends React.Component {
 
 	//sends a request with our location to server and return message will have an empty array which indicates and empty chat room
 	createNewChatRoom() {
-	  console.log('[this.state.lat, this.state.lon] ' , [this.state.lat, this.state.lon]);
 		var self = this;
 		$.ajax({
 		  url: "http://127.0.0.1:3000/",
 		  type: "POST",
-		  data: { location : [this.state.lat, this.state.lon] },
+		  data: { location : this.state.location },
 		  dataType: 'json',
 		  success: function(data) {
-		    console.log('sendCreateNewRoom success', data)
-	    	console.log('should return empty array', self.state.messages);
-		    console.log('data ' , data.messages);
 		    self.setState({
 		    	messages: data.messages
 		    })
-		    console.log('still working')
 		  },
 		  error: function(err) {
 		    console.log('sendCreateNewRoom err', err)
@@ -87,13 +106,12 @@ class App extends React.Component {
 		$.ajax({
       url: "http://127.0.0.1:3000/",
       type: "PUT",
-      data: { location : [this.state.lat, this.state.lon], message: message },
+      data: { location : this.state.location, message: message },
       dataType: 'json',
     }).done(function(data) {
     	self.setState({
     		messages: data.messages
     	})
-      console.log('sendAddNewMessage success', data)
     }).fail(function(err) {
       console.log('sendAddNewMessage err', err)
     })  
@@ -102,7 +120,6 @@ class App extends React.Component {
 	render() {
 		var childToRender;
 		var isInRoom = !!this.state.messages;
-		// var isInRoom = false
 
 		childToRender = isInRoom	
 			? (<ChatRoom
@@ -113,11 +130,27 @@ class App extends React.Component {
 				  createNewChatRoom={this.createNewChatRoom.bind(this)}
 				/>);
 
+		let appStyle = {
+		  margin: 'auto auto',
+		  width: '80%',
+		  height: '100%',
+		  border: '1px solid black',
+		  padding: '7%',
+		  textAlign: 'center',
+		  background: '#CCC',
+		}
+
+		let jumboStyle = {
+			border: '1px solid black',
+		}
+
 		return (
-			<div>
-				<h1>Crumbs Header here</h1>
+			<div style={appStyle}>
+				<Jumbotron style={jumboStyle}>
+					<h1>crumbs</h1>
+					<p>your local chatroom</p>
+				</Jumbotron>
 				{childToRender}
-				<h3>Crumbs Footer here</h3>
 			</div>
 		);
 	}

@@ -1,7 +1,18 @@
+import { Button } from 'react-bootstrap';
+
+var style = {
+  margin: 'auto auto',
+  height: '100%',
+}
+
 export let OutOfChatRoom = ({createNewChatRoom}) => (
-  <div>
-    <h2>Out of chat room header</h2>
-    <button onClick={createNewChatRoom}/>
-    <h2>Out of chat room footer</h2>
+  <div style={style}>
+    <h2>you are not in a Chatroom!</h2>
+    <br />
+    <p>create a chatroom at this spot to start a thread. Leave a message for someone else to find later!</p>
+    <br />
+    <Button bsStyle="primary" onClick={createNewChatRoom}>Create a new Chatroom!</Button>
+    <br />
+    <br />
   </div>
 )

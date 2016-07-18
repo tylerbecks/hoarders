@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
 var Token_Schema = mongoose.Schema({
-  location: [Number],
+  location: String,
   messages: [String],
 });
 
