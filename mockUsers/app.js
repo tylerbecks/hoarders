@@ -1,3 +1,5 @@
+var socket = io.connect('http://localhost:8000');
+
 var updateMapLocation = function(location) {
   var googlePos = new google.maps.LatLng(location.lat, location.lon);
   var mapOptions = {
@@ -18,24 +20,8 @@ var updateMapLocation = function(location) {
 }
 
 var updateServerLocation = function(location) {
-  $.ajax({
-    url: "http://127.0.0.1:8000/location",
-    type: "POST",
-    data: { location : location },
-    dataType: 'json',
-    error: function(err) {
-      console.log('sendCreateNewRoom err', err)
-    },
-  })
+  socket.emit('locationUpdate', location)
 }
-
-
-var socket = io.connect('http://localhost:8000');
-socket.on('news', function (data) {
-  console.log(data);
-  socket.emit('my other event', { my: 'data' });
-});
-
 
 $(document).ready(function() {
   var location = {lat: 37.8049, lon: -122.4194};
