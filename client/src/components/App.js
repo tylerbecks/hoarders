@@ -1,95 +1,159 @@
+import $ from 'jquery';
 import React from 'react';
-import { EnterCrumb } from './EnterCrumb.js'
-import { CrumbFeed } from './CrumbFeed.js'
+
+import { Jumbotron } from 'react-bootstrap';
+
+import { ChatRoom } from './ChatRoom.js'
+import { OutOfChatRoom } from './OutOfChatRoom.js'
 
 class App extends React.Component {
 	constructor(props){
 		super(props)
 		
 		this.state = {
-			crumbs: [],
-			token: true,
-			lat: 0,
-			lng: 0
+			messages: null,
+			location: "37.7837-122.4090",
+			demoMode: true,
 		}
-
 	}
 
-	setPosition(position) {
-		this.setState({
-			lat: position.coords.latitude,
-			lng: position.coords.longitude
+	componentWillMount() {
+		this.checkIfInChatRoom()
+		if (this.state.demoMode) {
+			setInterval(this.getDemoLocation.bind(this), 500)
+		} else {
+			setInterval(this.getLocation.bind(this), 500);
+		}
+	}
+
+	getDemoLocation() {
+		var self = this;
+		var position = {};
+		position.coords = {};
+		$.ajax({
+		  url: "http://127.0.0.1:8000/demo",
+		  type: "GET",
+		  data: { location : this.state.location },
+		  dataType: 'json',
+		}).done(function(data) {
+			position.coords.latitude = data.lat;
+			position.coords.longitude = data.lon;
+			self.setPosition(position);
+		}).fail(function(err) {
+		  console.log('checkMessages err', err)
 		})
 	}
 
-	error(err){
-		console.log(err);
-	}
-
+	//will watch our location and frequently call set position
 	getLocation() {
-		console.log(navigator.geolocation);
-		if ( navigator.geolocation) {
-			navigator.geolocation.watchPosition(this.setPosition.bind(this), this.error);
+		if ( navigator.geolocation ) {
+			navigator.geolocation.getCurrentPosition(this.setPosition.bind(this), this.error);
 		} else {
 			console.log("geolocation not supported")
 		}
 	}
 
-
-	componentDidMount() {
-		this.getLocation();
-		console.log('fire');
-
-	}
-
-	handleClick(e) {
+	//will continulally update our location state with our new position returned form navigator.geolocation and check if we are in chat room
+	setPosition(position) {
+		var latRound = position.coords.latitude.toFixed(3)
+		var lonRound = position.coords.longitude.toFixed(3)
+		var location = latRound.toString() + lonRound.toString()
 		this.setState({
-			token: !this.state.token
-		});
+			location: location,
+		})
+		this.checkIfInChatRoom()
 	}
 
-	AddCrumb(crumb) {
+	//sends reqest with our location to server and will set App.state.messages null (not in chatroom) or an array of messages (in chatroom)
+	checkIfInChatRoom() {
 		var self = this;
 		$.ajax({
-          url: "http://127.0.0.1:3000/",
-          type: "PUT",
-          data: { location : [41.25, 120.97], message: crumb },
-          dataType: 'json',
-        }).done(function(data) {
-        	self.setState({
-        		crumbs: data.messages
-        	})
-          console.log('sendAddNewMessage success', data)
-        }).fail(function(err) {
-          console.log('sendAddNewMessage err', err)
-        })  
-
-		
+		  url: "http://127.0.0.1:3000/location",
+		  type: "GET",
+		  data: { location : this.state.location },
+		  dataType: 'json',
+		}).done(function(data) {
+		  self.setState({
+		  	messages: data.messages
+		  })
+		}).fail(function(err) {
+		  console.log('checkMessages err', err)
+		})
 	}
 
-	render(){
-		if ( this.state.token === true ) {
-		return (
-		  <div>
-		  	<h1>LAT {this.state.lat}</h1>
-		  	<h1>LNG {this.state.lng}</h1>
-		  	<div>
-		  	<EnterCrumb addCrumb={this.AddCrumb.bind(this)} />
-		  	</div>
-		  	<div>
-		  	<CrumbFeed crumbs={this.state.crumbs} />
-		  	</div>
-		  	<button onClick={this.handleClick.bind(this)}>test </button>
-		  </div>
-		);
-		} else {
-			return (
-				<div>
-					<h1>Success</h1>
-					<button onClick={this.handleClick.bind(this)}>test</button>
-				</div>);
+	//sends a request with our location to server and return message will have an empty array which indicates and empty chat room
+	createNewChatRoom() {
+		var self = this;
+		$.ajax({
+		  url: "http://127.0.0.1:3000/",
+		  type: "POST",
+		  data: { location : this.state.location },
+		  dataType: 'json',
+		  success: function(data) {
+		    self.setState({
+		    	messages: data.messages
+		    })
+		  },
+		  error: function(err) {
+		    console.log('sendCreateNewRoom err', err)
+		  },
+		})  
+	}
+
+	//sends a request to server with our location and message and will append message to the db
+	addMessageToChatRoom(message) {
+		var self = this;
+		$.ajax({
+      url: "http://127.0.0.1:3000/",
+      type: "PUT",
+      data: { location : this.state.location, message: message },
+      dataType: 'json',
+    }).done(function(data) {
+    	self.setState({
+    		messages: data.messages
+    	})
+    }).fail(function(err) {
+      console.log('sendAddNewMessage err', err)
+    })  
+	}
+
+	render() {
+		var childToRender;
+		var isInRoom = !!this.state.messages;
+
+		childToRender = isInRoom	
+			? (<ChatRoom
+					messages={this.state.messages}
+					addMessageToChatRoom={this.addMessageToChatRoom.bind(this)}
+				/>)
+			: (<OutOfChatRoom
+				  createNewChatRoom={this.createNewChatRoom.bind(this)}
+				/>);
+
+		let appStyle = {
+		  margin: 'auto auto',
+		  width: '80%',
+		  height: '100%',
+		  border: '1px solid black',
+		  padding: '7%',
+		  textAlign: 'center',
+		  background: '#CCC',
 		}
+
+		let jumboStyle = {
+			border: '1px solid black',
+		}
+
+		return (
+			<div style={appStyle}>
+				<Jumbotron style={jumboStyle}>
+					<h1>crumbs</h1>
+					<p>your local chatroom</p>
+				</Jumbotron>
+				{childToRender}
+			</div>
+		);
 	}
 }
 
-export default App
+export default App;
