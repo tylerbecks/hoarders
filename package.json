@@ -6,7 +6,9 @@
   "scripts": {
     "server": "nodemon ./server/server.js",
     "client": "cd client && webpack --watch",
+    "sample": "nodemon ./mockUsers/server.js",
     "dev": "npm run server && npm run client",
+    "demo": "concurrently --kill-others \"mongod\" \"npm run server\" \"npm run sample\"  \"npm run client\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

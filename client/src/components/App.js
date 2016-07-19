@@ -13,7 +13,7 @@ class App extends React.Component {
 		this.state = {
 			messages: null,
 			location: "37.7837-122.4090",
-			demoMode: true,
+			demoMode: false,
 		}
 	}
 
