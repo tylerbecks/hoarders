@@ -21164,8 +21164,8 @@
 				}
 			}
 		}, {
-			key: 'componentWillMount',
-			value: function componentWillMount() {
+			key: 'componentDidMount',
+			value: function componentDidMount() {
 				this.getLocation();
 				console.log('fire');
 			}
@@ -21183,7 +21183,7 @@
 				$.ajax({
 					url: "http://127.0.0.1:3000/",
 					type: "PUT",
-					data: { location: [1, 1], message: crumb },
+					data: { location: [41.25, 120.97], message: crumb },
 					dataType: 'json'
 				}).done(function (data) {
 					self.setState({

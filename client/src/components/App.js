@@ -36,7 +36,7 @@ class App extends React.Component {
 	}
 
 
-	componentWillMount() {
+	componentDidMount() {
 		this.getLocation();
 		console.log('fire');
 
@@ -53,7 +53,7 @@ class App extends React.Component {
 		$.ajax({
           url: "http://127.0.0.1:3000/",
           type: "PUT",
-          data: { location : [1, 1], message: crumb },
+          data: { location : [41.25, 120.97], message: crumb },
           dataType: 'json',
         }).done(function(data) {
         	self.setState({

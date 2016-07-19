@@ -4,7 +4,7 @@ var bodyParser = require('body-parser');
 var cors = require('cors')
 
 //middleware decorator
-module.exports = function(app, express) {
+module.exports = function(app) {
   app.use(morgan('dev'));
   app.use(bodyParser.urlencoded({extended: true}));
   app.use(bodyParser.json());
