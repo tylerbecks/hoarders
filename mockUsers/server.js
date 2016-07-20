@@ -23,7 +23,7 @@ io.on('connection', function (socket) {
     location.lon = Number(data.lon)
   });
   socket.on('getDemoLocation', function () {
-    socket.emit('newDemoLocation', location);
+    socket.emit('setDemoLocation', location);
   });
 });
 

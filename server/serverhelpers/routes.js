@@ -6,3 +6,4 @@ module.exports = function(app, express) {
   app.post('/', tokenController.createToken)
   app.put('/', tokenController.writeToToken)
 }
+

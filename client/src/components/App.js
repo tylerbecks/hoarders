@@ -19,10 +19,10 @@ class App extends React.Component {
 
 	componentWillMount() {
 		var self = this;
-		this.checkIfInChatRoom()
+
 		if (this.state.demoMode) {
-			setInterval(this.getDemoLocation.bind(this), 500)
-			this.props.demoSocket.on('newDemoLocation', function(data) {
+			setInterval(this.getDemoLocation.bind(this), 100)
+			this.props.demoSocket.on('setDemoLocation', function(data) {
 				var position = {};
 				position.coords = {};
 				position.coords.latitude = data.lat;
@@ -32,6 +32,21 @@ class App extends React.Component {
 		} else {
 			setInterval(this.getLocation.bind(this), 500);
 		}
+
+		//socket event listener for new updating state of location
+		this.props.mainSocket.on('setLocation', function(location) {
+			var messages = location ? location.messages : null;
+			self.setState({
+				messages: messages
+			})				
+		})
+
+		this.props.mainSocket.on('setLocation', function(location) {
+			var messages = location ? location.messages : null;
+			self.setState({
+				messages: messages
+			})				
+		})
 	}
 
 	getDemoLocation() {
@@ -60,38 +75,12 @@ class App extends React.Component {
 
 	//sends reqest with our location to server and will set App.state.messages null (not in chatroom) or an array of messages (in chatroom)
 	checkIfInChatRoom() {
-		var self = this;
-		$.ajax({
-		  url: "http://127.0.0.1:3000/location",
-		  type: "GET",
-		  data: { location : this.state.location },
-		  dataType: 'json',
-		}).done(function(data) {
-		  self.setState({
-		  	messages: data.messages
-		  })
-		}).fail(function(err) {
-		  console.log('checkMessages err', err)
-		})
+		this.props.mainSocket.emit('getLocation', this.state.location);
 	}
 
 	//sends a request with our location to server and return message will have an empty array which indicates and empty chat room
 	createNewChatRoom() {
-		var self = this;
-		$.ajax({
-		  url: "http://127.0.0.1:3000/",
-		  type: "POST",
-		  data: { location : this.state.location },
-		  dataType: 'json',
-		  success: function(data) {
-		    self.setState({
-		    	messages: data.messages
-		    })
-		  },
-		  error: function(err) {
-		    console.log('sendCreateNewRoom err', err)
-		  },
-		})  
+		this.props.mainSocket.emit('createChatRoom', this.state.location);
 	}
 
 	//sends a request to server with our location and message and will append message to the db
