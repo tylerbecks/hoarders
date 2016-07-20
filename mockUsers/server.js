@@ -22,6 +22,9 @@ io.on('connection', function (socket) {
     location.lat = Number(data.lat)
     location.lon = Number(data.lon)
   });
+  socket.on('getDemoLocation', function () {
+    socket.emit('newDemoLocation', location);
+  });
 });
 
 app.get('/demo', function(req, res) {
