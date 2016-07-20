@@ -6,7 +6,9 @@
   "scripts": {
     "server": "nodemon ./server/server.js",
     "client": "cd client && webpack --watch",
+    "sample": "nodemon ./mockUsers/server.js",
     "dev": "npm run server && npm run client",
+    "demo": "concurrently --kill-others \"mongod\" \"npm run server\" \"npm run sample\"  \"npm run client\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -40,6 +42,7 @@
     "react-bootstrap": "^0.29.5",
     "react-dom": "^15.2.1",
     "request": "^2.73.0",
+    "socket.io": "^1.4.8",
     "webpack": "^1.13.1"
   }
 }

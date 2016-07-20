@@ -18,30 +18,24 @@ class App extends React.Component {
 	}
 
 	componentWillMount() {
+		var self = this;
 		this.checkIfInChatRoom()
 		if (this.state.demoMode) {
 			setInterval(this.getDemoLocation.bind(this), 500)
+			this.props.demoSocket.on('newDemoLocation', function(data) {
+				var position = {};
+				position.coords = {};
+				position.coords.latitude = data.lat;
+				position.coords.longitude = data.lon;
+				self.setPosition(position);
+			})
 		} else {
 			setInterval(this.getLocation.bind(this), 500);
 		}
 	}
 
 	getDemoLocation() {
-		var self = this;
-		var position = {};
-		position.coords = {};
-		$.ajax({
-		  url: "http://127.0.0.1:8000/demo",
-		  type: "GET",
-		  data: { location : this.state.location },
-		  dataType: 'json',
-		}).done(function(data) {
-			position.coords.latitude = data.lat;
-			position.coords.longitude = data.lon;
-			self.setPosition(position);
-		}).fail(function(err) {
-		  console.log('checkMessages err', err)
-		})
+		this.props.demoSocket.emit('getDemoLocation', null);
 	}
 
 	//will watch our location and frequently call set position
