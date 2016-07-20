@@ -109,6 +109,7 @@ class App extends React.Component {
       data: { location : this.state.location, message: message },
       dataType: 'json',
     }).done(function(data) {
+    	console.log(data.messages);
     	self.setState({
     		messages: data.messages
     	})

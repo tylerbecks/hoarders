@@ -37,7 +37,7 @@ module.exports = {
     var tokenDataReturn = {};
     Token.findOne({location: location}, function(err, tokenData) {
       var newMessages = tokenData.messages;
-      newMessages.unshift(message);
+      newMessages.unshift({message: message});
       tokenDataReturn.messages = newMessages;
       Token.update({location: location}, {messages: newMessages}, function(err, dataBaseResponse) {
         !err ? res.send(tokenDataReturn) : console.log('failed to put message', err)
