@@ -6,15 +6,14 @@ module.exports = {
   
   //function takes in array of lat and long and will query database to see if a token exists in that location
   //if it exists will return an array of messages from db, if not, will return null
-  getLocationMessages: function(location, socket) {
+  updateMessagesState: function(location, socket) {
     Token.findOne({location: location}, function(err, tokenData) {
-      socket.emit('setLocation', tokenData)
+      socket.emit('updateMessagesState', tokenData)
     })
   },
 
   //function takes in array of lat and long and will write a key (lat long array) value (empty array for messages) to db
-  createToken: function(req, res) {
-    var location = req.body.location;
+  createChatRoom: function(location, socket) {
     new Token({
       location: location,
       messages: [],
@@ -23,23 +22,21 @@ module.exports = {
         !err ? resolve(data) : reject(err); 
       })
     }).then((data) => {
-      socket.emit('setLocation', tokenData)
+      socket.emit('updateMessagesState', data)
     }).catch((err) => {
       console.log('createToken data failed to save to database', err)
     })
   },
 
   //function that inputs a {location: [long, lat], message: 'string'} object and pushes string into that token's messages array
-  writeToToken: function(req, res) {
-    var location = req.body.location;
-    var message = req.body.message;
+  addMessageToChatRoom: function(location, message, socket) {
     var tokenDataReturn = {};
     Token.findOne({location: location}, function(err, tokenData) {
       var newMessages = tokenData.messages;
       newMessages.unshift(message);
       tokenDataReturn.messages = newMessages;
       Token.update({location: location}, {messages: newMessages}, function(err, dataBaseResponse) {
-        !err ? res.send(tokenDataReturn) : console.log('failed to put message', err)
+        socket.emit('updateMessagesState', tokenDataReturn)
       })
     })  
   },  

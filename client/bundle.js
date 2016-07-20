@@ -21155,40 +21155,70 @@
 		_createClass(App, [{
 			key: 'componentWillMount',
 			value: function componentWillMount() {
-				var self = this;
+				//Selects the source that the app is fetching location from
 
-				if (this.state.demoMode) {
-					setInterval(this.getDemoLocation.bind(this), 100);
-					this.props.demoSocket.on('setDemoLocation', function (data) {
-						var position = {};
-						position.coords = {};
-						position.coords.latitude = data.lat;
-						position.coords.longitude = data.lon;
-						self.setPosition(position);
-					});
+				if (!!this.state.demoMode) {
+					setInterval(this.updateLocationStateDemo.bind(this), 500);
 				} else {
 					setInterval(this.getLocation.bind(this), 500);
 				}
 
-				//socket event listener for new updating state of location
-				this.props.mainSocket.on('setLocation', function (location) {
-					var messages = location ? location.messages : null;
-					self.setState({
-						messages: messages
-					});
+				//Sets up all the socket event listeners for the app
+				var self = this;
+
+				//shortcuts for both sockets
+				var demo = this.props.demoSocket;
+				var main = this.props.mainSocket;
+
+				//listens for a location update from the demo server
+				demo.on('updateLocationStateDemo', function (data) {
+					var position = {};
+					position.coords = {};
+					position.coords.latitude = data.lat;
+					position.coords.longitude = data.lon;
+					self.setPosition(position);
 				});
 
-				this.props.mainSocket.on('setLocation', function (location) {
+				//listens for a messages update from the main server
+				main.on('updateMessagesState', function (location) {
+					console.log('location ', location);
 					var messages = location ? location.messages : null;
 					self.setState({
 						messages: messages
 					});
 				});
 			}
+
+			//socket request to demo server to update the state of the location of the app
+
 		}, {
-			key: 'getDemoLocation',
-			value: function getDemoLocation() {
-				this.props.demoSocket.emit('getDemoLocation', null);
+			key: 'updateLocationStateDemo',
+			value: function updateLocationStateDemo() {
+				this.props.demoSocket.emit('updateLocationStateDemo', null);
+			}
+
+			//socket request to the main server to update messages state based on location state
+
+		}, {
+			key: 'updateMessagesState',
+			value: function updateMessagesState() {
+				this.props.mainSocket.emit('updateMessagesState', this.state.location);
+			}
+
+			//socket request to the main server to create a new chatroom
+
+		}, {
+			key: 'createChatRoom',
+			value: function createChatRoom() {
+				this.props.mainSocket.emit('createChatRoom', this.state.location);
+			}
+
+			//socket request to chatroom to append a new message to
+
+		}, {
+			key: 'addMessageToChatRoom',
+			value: function addMessageToChatRoom(message) {
+				this.props.mainSocket.emit('addMessageToChatRoom', { location: this.state.location, message: message });
 			}
 
 			//will watch our location and frequently call set position
@@ -21214,44 +21244,13 @@
 				this.setState({
 					location: location
 				});
-				this.checkIfInChatRoom();
+				this.updateMessagesState();
 			}
 
 			//sends reqest with our location to server and will set App.state.messages null (not in chatroom) or an array of messages (in chatroom)
 
-		}, {
-			key: 'checkIfInChatRoom',
-			value: function checkIfInChatRoom() {
-				this.props.mainSocket.emit('getLocation', this.state.location);
-			}
-
-			//sends a request with our location to server and return message will have an empty array which indicates and empty chat room
-
-		}, {
-			key: 'createNewChatRoom',
-			value: function createNewChatRoom() {
-				this.props.mainSocket.emit('createChatRoom', this.state.location);
-			}
-
 			//sends a request to server with our location and message and will append message to the db
 
-		}, {
-			key: 'addMessageToChatRoom',
-			value: function addMessageToChatRoom(message) {
-				var self = this;
-				_jquery2.default.ajax({
-					url: "http://127.0.0.1:3000/",
-					type: "PUT",
-					data: { location: this.state.location, message: message },
-					dataType: 'json'
-				}).done(function (data) {
-					self.setState({
-						messages: data.messages
-					});
-				}).fail(function (err) {
-					console.log('sendAddNewMessage err', err);
-				});
-			}
 		}, {
 			key: 'render',
 			value: function render() {
@@ -21262,7 +21261,7 @@
 					messages: this.state.messages,
 					addMessageToChatRoom: this.addMessageToChatRoom.bind(this)
 				}) : _react2.default.createElement(_OutOfChatRoom.OutOfChatRoom, {
-					createNewChatRoom: this.createNewChatRoom.bind(this)
+					createChatRoom: this.createChatRoom.bind(this)
 				});
 
 				var appStyle = {
@@ -87193,7 +87192,7 @@
 	};
 
 	var OutOfChatRoom = exports.OutOfChatRoom = function OutOfChatRoom(_ref) {
-	  var createNewChatRoom = _ref.createNewChatRoom;
+	  var createChatRoom = _ref.createChatRoom;
 	  return React.createElement(
 	    'div',
 	    { style: style },
@@ -87211,7 +87210,7 @@
 	    React.createElement('br', null),
 	    React.createElement(
 	      _reactBootstrap.Button,
-	      { bsStyle: 'primary', onClick: createNewChatRoom },
+	      { bsStyle: 'primary', onClick: createChatRoom },
 	      'Create a new Chatroom!'
 	    ),
 	    React.createElement('br', null),

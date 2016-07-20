@@ -21,15 +21,18 @@ routers(app, express);
 var socketHandlers = require('./db/tokendb/socketHandlers.js');
 
 io.on('connection', function (socket) {
-  socket.on('getLocation', function (location) {
-    socket.emit('setDemoLocation', location);
-  });
 
-  socket.on('getLocation', function(data) {
-    socketHandlers.getLocationMessages(data, socket)
+  socket.on('updateMessagesState', function(location) {
+    socketHandlers.updateMessagesState(location, socket)
   })
 
+  socket.on('createChatRoom', function(location) {
+    socketHandlers.createChatRoom(location, socket)
+  })
 
+  socket.on('addMessageToChatRoom', function( msgObj ) {
+    socketHandlers.addMessageToChatRoom(msgObj.location, msgObj.message, socket)
+  })
 });
 
 // App now listening on port 3000.

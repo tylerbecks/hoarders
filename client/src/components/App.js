@@ -18,39 +18,58 @@ class App extends React.Component {
 	}
 
 	componentWillMount() {
-		var self = this;
+		//Selects the source that the app is fetching location from
 
-		if (this.state.demoMode) {
-			setInterval(this.getDemoLocation.bind(this), 100)
-			this.props.demoSocket.on('setDemoLocation', function(data) {
-				var position = {};
-				position.coords = {};
-				position.coords.latitude = data.lat;
-				position.coords.longitude = data.lon;
-				self.setPosition(position);
-			})
+		if (!!this.state.demoMode) {
+		  setInterval(this.updateLocationStateDemo.bind(this), 500)
 		} else {
-			setInterval(this.getLocation.bind(this), 500);
+		  setInterval(this.getLocation.bind(this), 500);
 		}
 
-		//socket event listener for new updating state of location
-		this.props.mainSocket.on('setLocation', function(location) {
-			var messages = location ? location.messages : null;
-			self.setState({
-				messages: messages
-			})				
+		//Sets up all the socket event listeners for the app
+		var self = this;
+
+		//shortcuts for both sockets
+		var demo = this.props.demoSocket;
+		var main = this.props.mainSocket;
+
+		//listens for a location update from the demo server
+		demo.on('updateLocationStateDemo', function(data) {
+			var position = {};
+			position.coords = {};
+			position.coords.latitude = data.lat;
+			position.coords.longitude = data.lon;
+			self.setPosition(position);
 		})
 
-		this.props.mainSocket.on('setLocation', function(location) {
+		//listens for a messages update from the main server
+		main.on('updateMessagesState', function(location) {
+			console.log('location ' , location);
 			var messages = location ? location.messages : null;
 			self.setState({
 				messages: messages
-			})				
+			})	
 		})
 	}
 
-	getDemoLocation() {
-		this.props.demoSocket.emit('getDemoLocation', null);
+	//socket request to demo server to update the state of the location of the app
+	updateLocationStateDemo() {
+		this.props.demoSocket.emit('updateLocationStateDemo', null);
+	}
+
+	//socket request to the main server to update messages state based on location state
+	updateMessagesState() {
+		this.props.mainSocket.emit('updateMessagesState', this.state.location);
+	}
+
+	//socket request to the main server to create a new chatroom
+	createChatRoom() {
+		this.props.mainSocket.emit('createChatRoom', this.state.location);
+	}
+	
+	//socket request to chatroom to append a new message to
+	addMessageToChatRoom(message) {
+		this.props.mainSocket.emit('addMessageToChatRoom', {location: this.state.location, message: message});
 	}
 
 	//will watch our location and frequently call set position
@@ -70,35 +89,13 @@ class App extends React.Component {
 		this.setState({
 			location: location,
 		})
-		this.checkIfInChatRoom()
+		this.updateMessagesState()
 	}
 
 	//sends reqest with our location to server and will set App.state.messages null (not in chatroom) or an array of messages (in chatroom)
-	checkIfInChatRoom() {
-		this.props.mainSocket.emit('getLocation', this.state.location);
-	}
 
-	//sends a request with our location to server and return message will have an empty array which indicates and empty chat room
-	createNewChatRoom() {
-		this.props.mainSocket.emit('createChatRoom', this.state.location);
-	}
 
 	//sends a request to server with our location and message and will append message to the db
-	addMessageToChatRoom(message) {
-		var self = this;
-		$.ajax({
-      url: "http://127.0.0.1:3000/",
-      type: "PUT",
-      data: { location : this.state.location, message: message },
-      dataType: 'json',
-    }).done(function(data) {
-    	self.setState({
-    		messages: data.messages
-    	})
-    }).fail(function(err) {
-      console.log('sendAddNewMessage err', err)
-    })  
-	}
 
 	render() {
 		var childToRender;
@@ -110,7 +107,7 @@ class App extends React.Component {
 					addMessageToChatRoom={this.addMessageToChatRoom.bind(this)}
 				/>)
 			: (<OutOfChatRoom
-				  createNewChatRoom={this.createNewChatRoom.bind(this)}
+				  createChatRoom={this.createChatRoom.bind(this)}
 				/>);
 
 		let appStyle = {

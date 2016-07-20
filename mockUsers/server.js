@@ -22,8 +22,8 @@ io.on('connection', function (socket) {
     location.lat = Number(data.lat)
     location.lon = Number(data.lon)
   });
-  socket.on('getDemoLocation', function () {
-    socket.emit('setDemoLocation', location);
+  socket.on('updateLocationStateDemo', function () {
+    socket.emit('updateLocationStateDemo', location);
   });
 });
 
