@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import React from 'react';
+import { Authentication } from './Authentication';
 
 import { Jumbotron } from 'react-bootstrap';
 
@@ -139,19 +140,18 @@ class App extends React.Component {
 		}
 
 		return (
-			<div style={appStyle}>
-				<Jumbotron style={jumboStyle}>
-					<h1>crumbs</h1>
-					<p>your local chatroom</p>
-				</Jumbotron>
-				{childToRender}
+			<div>
+			  <Authentication />
+			  <div style={appStyle}>
+				  <Jumbotron style={jumboStyle}>
+					  <h1>Crumbs</h1>
+					  <p>your local chatroom</p>
+				  </Jumbotron>
+				  {childToRender}
+			  </div>
 			</div>
 		);
 	}
 }
 
-<<<<<<< HEAD
 export default App;
-=======
-export default App;
->>>>>>> 46ff866e885e8ec4d1f4db19d7de8d90146c4b8d
