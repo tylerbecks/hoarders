@@ -1,7 +1,8 @@
 import React from 'react';
+import Moment from 'moment';
 
 import { Panel, ListGroupItem } from 'react-bootstrap';
 
 export let MessageListEntry = ({message}) => (
-  <ListGroupItem> { message } </ListGroupItem>
+  <ListGroupItem> { message.message + ' ' + Moment(message.createdAt).fromNow() } </ListGroupItem>
 )
