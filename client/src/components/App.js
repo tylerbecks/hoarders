@@ -109,7 +109,6 @@ class App extends React.Component {
       data: { location : this.state.location, message: message },
       dataType: 'json',
     }).done(function(data) {
-    	console.log(data.messages);
     	self.setState({
     		messages: data.messages
     	})
@@ -157,4 +156,8 @@ class App extends React.Component {
 	}
 }
 
+<<<<<<< HEAD
 export default App;
+=======
+export default App;
+>>>>>>> 46ff866e885e8ec4d1f4db19d7de8d90146c4b8d
