@@ -15,7 +15,7 @@ export default class App extends React.Component {
 			messages: null,
 			location: "37.7837-122.4090",
 			demoMode: true,
-			userLoggedIn: true,
+			userLoggedIn: false,
 		}
 	}
 
@@ -110,7 +110,7 @@ export default class App extends React.Component {
 					addMessageToChatRoom={this.addMessageToChatRoom.bind(this)}
 				/>)
 			: (<OutOfChatRoom
-				  createNewChatRoom={this.createNewChatRoom.bind(this)}
+				  createChatRoom={this.createChatRoom.bind(this)}
 				/>);
 
 

@@ -21,14 +21,12 @@ export class Authentication extends React.Component {
 	}
 
   handleUserTextChange(e) {
-  		console.log(this.state.usernameText);
   	this.setState({
   		usernameText: e.target.value
   	});
   }
 
 	handlePasswordTextChange(e) {
-			console.log(this.state.passwordText);
 		this.setState({
 			passwordText: e.target.value
 		});
