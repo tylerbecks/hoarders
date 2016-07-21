@@ -2,7 +2,7 @@ import $ from 'jquery';
 import React from 'react';
 import { Authentication } from './Authentication';
 
-import { Jumbotron } from 'react-bootstrap';
+import { Jumbotron, Button } from 'react-bootstrap';
 
 import { ChatRoom } from './ChatRoom.js'
 import { OutOfChatRoom } from './OutOfChatRoom.js'
@@ -41,6 +41,12 @@ export default class App extends React.Component {
 			this.setState({
 				messages: messages
 			})	
+		})
+
+		this.props.mainSocket.on('Authentication', (user) => {
+			this.setState({
+				userLoggedIn: user
+			})
 		})
 	}
 
@@ -81,9 +87,14 @@ export default class App extends React.Component {
 	
 	//socket request to chatroom to append a new message to
 	addMessageToChatRoom(message) {
-		this.props.mainSocket.emit('addMessageToChatRoom', {location: this.state.location, message: message});
+		this.props.mainSocket.emit('addMessageToChatRoom', {location: this.state.location, message: message, username: this.state.userLoggedIn});
 	}
 
+	logOutUser() {
+		this.setState({
+			userLoggedIn: false
+		})
+	}
 
 	render() {
 
@@ -107,17 +118,23 @@ export default class App extends React.Component {
 		childToRender = isInRoom	
 			? (<ChatRoom
 					messages={this.state.messages}
+					user={this.state.userLoggedIn}
 					addMessageToChatRoom={this.addMessageToChatRoom.bind(this)}
 				/>)
 			: (<OutOfChatRoom
 				  createChatRoom={this.createChatRoom.bind(this)}
 				/>);
 
-
 // Define appLoggedIn render
 		let appLoggedIn = (
-			<div>
-			  <div style={appStyle}>
+			<div style={appStyle}>
+		  	<Button
+		  		style={{float: 'right'}}
+		  		bsStyle='link'
+		  		onClick={this.logOutUser.bind(this)}>
+			  	Logout
+		  	</Button>
+			  <div>
 				  <Jumbotron style={jumboStyle}>
 				  	<h1>Crumbs</h1>
 				  	<p>your local chatroom</p>
@@ -129,11 +146,11 @@ export default class App extends React.Component {
 
 // Render UserLoggedIn Vs. Authentication Required Based off of this.state.userLoggedIn
     var appOrAuth;
-    var userLoggedIn = this.state.userLoggedIn;
+    var userLoggedIn = !!this.state.userLoggedIn;
 
     appOrAuth = userLoggedIn 
     ? appLoggedIn 
-    : <Authentication/>
+    : <Authentication mainSocket={this.props.mainSocket}/>
 
 // Return component based off userLoggedIn state
 		return (appOrAuth);

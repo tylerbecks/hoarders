@@ -21179,6 +21179,12 @@
 						messages: messages
 					});
 				});
+
+				this.props.mainSocket.on('Authentication', function (user) {
+					_this2.setState({
+						userLoggedIn: user
+					});
+				});
 			}
 
 			//will watch our location and frequently call set position
@@ -21236,7 +21242,14 @@
 		}, {
 			key: 'addMessageToChatRoom',
 			value: function addMessageToChatRoom(message) {
-				this.props.mainSocket.emit('addMessageToChatRoom', { location: this.state.location, message: message });
+				this.props.mainSocket.emit('addMessageToChatRoom', { location: this.state.location, message: message, username: this.state.userLoggedIn });
+			}
+		}, {
+			key: 'logOutUser',
+			value: function logOutUser() {
+				this.setState({
+					userLoggedIn: false
+				});
 			}
 		}, {
 			key: 'render',
@@ -21261,6 +21274,7 @@
 
 				childToRender = isInRoom ? _react2.default.createElement(_ChatRoom.ChatRoom, {
 					messages: this.state.messages,
+					user: this.state.userLoggedIn,
 					addMessageToChatRoom: this.addMessageToChatRoom.bind(this)
 				}) : _react2.default.createElement(_OutOfChatRoom.OutOfChatRoom, {
 					createChatRoom: this.createChatRoom.bind(this)
@@ -21269,10 +21283,18 @@
 				// Define appLoggedIn render
 				var appLoggedIn = _react2.default.createElement(
 					'div',
-					null,
+					{ style: appStyle },
+					_react2.default.createElement(
+						_reactBootstrap.Button,
+						{
+							style: { float: 'right' },
+							bsStyle: 'link',
+							onClick: this.logOutUser.bind(this) },
+						'Logout'
+					),
 					_react2.default.createElement(
 						'div',
-						{ style: appStyle },
+						null,
 						_react2.default.createElement(
 							_reactBootstrap.Jumbotron,
 							{ style: jumboStyle },
@@ -21293,9 +21315,9 @@
 
 				// Render UserLoggedIn Vs. Authentication Required Based off of this.state.userLoggedIn
 				var appOrAuth;
-				var userLoggedIn = this.state.userLoggedIn;
+				var userLoggedIn = !!this.state.userLoggedIn;
 
-				appOrAuth = userLoggedIn ? appLoggedIn : _react2.default.createElement(_Authentication.Authentication, null);
+				appOrAuth = userLoggedIn ? appLoggedIn : _react2.default.createElement(_Authentication.Authentication, { mainSocket: this.props.mainSocket });
 
 				// Return component based off userLoggedIn state
 				return appOrAuth;
@@ -31457,6 +31479,19 @@
 					passwordText: e.target.value
 				});
 			}
+
+			// Pass down clickhandler to Login
+
+		}, {
+			key: 'validateUserLogin',
+			value: function validateUserLogin() {
+				this.props.mainSocket.emit('validateUserLogin', { username: this.state.usernameText, password: this.state.passwordText });
+			}
+		}, {
+			key: 'validateUserSignup',
+			value: function validateUserSignup() {
+				this.props.mainSocket.emit('validateUserSignup', { username: this.state.usernameText, password: this.state.passwordText });
+			}
 		}, {
 			key: 'render',
 			value: function render() {
@@ -31481,7 +31516,9 @@
 
 				// Render the Login Vs. SignUp based on state of this.state.login
 				pageToRender = loginPage ? _react2.default.createElement(_Login.Login, {
+					validateUserLogin: this.validateUserLogin.bind(this),
 					signUp: this.handleClick.bind(this) }) : _react2.default.createElement(_SignUp.SignUp, {
+					validateUserSignup: this.validateUserSignup.bind(this),
 					logIn: this.handleClick.bind(this) });
 
 				return _react2.default.createElement(
@@ -50913,7 +50950,9 @@
 	          ),
 	          _react2.default.createElement(
 	            _reactBootstrap.Button,
-	            { bsStyle: 'primary' },
+	            {
+	              onClick: this.props.validateUserLogin.bind(this),
+	              bsStyle: 'primary' },
 	            ' Log In '
 	          )
 	        )
@@ -50971,13 +51010,17 @@
 	          null,
 	          _react2.default.createElement(
 	            _reactBootstrap.Button,
-	            { onClick: this.props.logIn, bsStyle: 'link' },
-	            ' Already have an account? '
+	            {
+	              onClick: this.props.logIn,
+	              bsStyle: 'link' },
+	            'Already have an account?'
 	          ),
 	          _react2.default.createElement(
 	            _reactBootstrap.Button,
-	            { bsStyle: 'primary' },
-	            ' Sign Up '
+	            {
+	              onClick: this.props.validateUserSignup.bind(this),
+	              bsStyle: 'primary' },
+	            'Sign Up'
 	          )
 	        )
 	      );
@@ -51260,7 +51303,7 @@
 	    _reactBootstrap.ListGroupItem,
 	    null,
 	    ' ',
-	    message.message + ' ' + (0, _moment2.default)(message.createdAt).fromNow(),
+	    message.username + ' ' + message.message + ' ' + (0, _moment2.default)(message.createdAt).fromNow(),
 	    ' '
 	  );
 	};

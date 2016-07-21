@@ -32,6 +32,16 @@ export class Authentication extends React.Component {
 		});
 	}
 
+	// Pass down clickhandler to Login
+
+	validateUserLogin() {
+		this.props.mainSocket.emit('validateUserLogin', {username: this.state.usernameText, password: this.state.passwordText});
+	}
+
+	validateUserSignup() {
+		this.props.mainSocket.emit('validateUserSignup', {username: this.state.usernameText, password: this.state.passwordText});
+	}
+
 	render() {
 		var pageToRender;
 		var loginPage = !!this.state.login;
@@ -55,8 +65,10 @@ export class Authentication extends React.Component {
 // Render the Login Vs. SignUp based on state of this.state.login
 		pageToRender = loginPage
 		 ? (<Login 
+		 	   validateUserLogin={this.validateUserLogin.bind(this)}
 		 	   signUp={this.handleClick.bind(this)}/>) 
-		 : (<SignUp 
+		 : (<SignUp
+		 	   validateUserSignup={this.validateUserSignup.bind(this)} 
 		 	   logIn={this.handleClick.bind(this)}/>);
 
 		return (
