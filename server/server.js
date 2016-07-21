@@ -12,9 +12,9 @@ db.connect()
 var middleware = require('./serverhelpers/middleware.js');
 middleware(app, express);
 
-// Invoke routers function on app to provide access to all routes defined.
-var routers = require('./serverhelpers/routes.js');
-routers(app, express);
+// // Invoke routers function on app to provide access to all routes defined.
+// var routers = require('./serverhelpers/routes.js');
+// routers(app, express);
 
 
 // //import and route socket event handling

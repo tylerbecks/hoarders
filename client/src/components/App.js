@@ -6,7 +6,7 @@ import { Jumbotron } from 'react-bootstrap';
 import { ChatRoom } from './ChatRoom.js'
 import { OutOfChatRoom } from './OutOfChatRoom.js'
 
-class App extends React.Component {
+export default class App extends React.Component {
 	constructor(props){
 		super(props)
 		
@@ -18,38 +18,48 @@ class App extends React.Component {
 	}
 
 	componentWillMount() {
-		//Selects the source that the app is fetching location from
-
-		if (!!this.state.demoMode) {
-		  setInterval(this.updateLocationStateDemo.bind(this), 500)
-		} else {
-		  setInterval(this.getLocation.bind(this), 500);
-		}
-
-		//Sets up all the socket event listeners for the app
-		var self = this;
-
-		//shortcuts for both sockets
-		var demo = this.props.demoSocket;
-		var main = this.props.mainSocket;
+		//selects and executes which source to use for setting the location state of application: demo or html5 nav
+		var locationSource = !!this.state.demoMode
+			? this.updateLocationStateDemo.bind(this)
+			: this.updateLocationState.bind(this);
+		setInterval(locationSource, 500)
 
 		//listens for a location update from the demo server
-		demo.on('updateLocationStateDemo', function(data) {
+		this.props.demoSocket.on('updateLocationStateDemo', (data) => {
 			var position = {};
 			position.coords = {};
 			position.coords.latitude = data.lat;
 			position.coords.longitude = data.lon;
-			self.setPosition(position);
+			this.setPosition(position);
 		})
 
 		//listens for a messages update from the main server
-		main.on('updateMessagesState', function(location) {
-			console.log('location ' , location);
+		this.props.mainSocket.on('updateMessagesState', (location) => {
 			var messages = location ? location.messages : null;
-			self.setState({
+			this.setState({
 				messages: messages
 			})	
 		})
+	}
+
+	//will watch our location and frequently call set position
+	updateLocationState() {
+		if ( navigator.geolocation ) {
+			navigator.geolocation.getCurrentPosition(this.setPosition.bind(this), this.error);
+		} else {
+			console.log("geolocation not supported")
+		}
+	}
+
+	//will continulally update our location state with our new position returned form navigator.geolocation and check if we are in chat room
+	setPosition(position) {
+		var latRound = position.coords.latitude.toFixed(3)
+		var lonRound = position.coords.longitude.toFixed(3)
+		var location = latRound.toString() + lonRound.toString()
+		this.setState({
+			location: location,
+		})
+		this.updateMessagesState()
 	}
 
 	//socket request to demo server to update the state of the location of the app
@@ -72,30 +82,6 @@ class App extends React.Component {
 		this.props.mainSocket.emit('addMessageToChatRoom', {location: this.state.location, message: message});
 	}
 
-	//will watch our location and frequently call set position
-	getLocation() {
-		if ( navigator.geolocation ) {
-			navigator.geolocation.getCurrentPosition(this.setPosition.bind(this), this.error);
-		} else {
-			console.log("geolocation not supported")
-		}
-	}
-
-	//will continulally update our location state with our new position returned form navigator.geolocation and check if we are in chat room
-	setPosition(position) {
-		var latRound = position.coords.latitude.toFixed(3)
-		var lonRound = position.coords.longitude.toFixed(3)
-		var location = latRound.toString() + lonRound.toString()
-		this.setState({
-			location: location,
-		})
-		this.updateMessagesState()
-	}
-
-	//sends reqest with our location to server and will set App.state.messages null (not in chatroom) or an array of messages (in chatroom)
-
-
-	//sends a request to server with our location and message and will append message to the db
 
 	render() {
 		var childToRender;
@@ -136,8 +122,5 @@ class App extends React.Component {
 	}
 }
 
-<<<<<<< HEAD
-export default App;
-=======
-export default App;
->>>>>>> 46ff866e885e8ec4d1f4db19d7de8d90146c4b8d
+
+
