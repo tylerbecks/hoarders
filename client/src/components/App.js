@@ -6,7 +6,7 @@ import { Jumbotron } from 'react-bootstrap';
 import { ChatRoom } from './ChatRoom.js'
 import { OutOfChatRoom } from './OutOfChatRoom.js'
 
-class App extends React.Component {
+export default class App extends React.Component {
 	constructor(props){
 		super(props)
 		
@@ -18,28 +18,32 @@ class App extends React.Component {
 	}
 
 	componentWillMount() {
-		var self = this;
-		this.checkIfInChatRoom()
-		if (this.state.demoMode) {
-			setInterval(this.getDemoLocation.bind(this), 500)
-			this.props.demoSocket.on('newDemoLocation', function(data) {
-				var position = {};
-				position.coords = {};
-				position.coords.latitude = data.lat;
-				position.coords.longitude = data.lon;
-				self.setPosition(position);
-			})
-		} else {
-			setInterval(this.getLocation.bind(this), 500);
-		}
-	}
+		//selects and executes which source to use for setting the location state of application: demo or html5 nav
+		var locationSource = !!this.state.demoMode
+			? this.updateLocationStateDemo.bind(this)
+			: this.updateLocationState.bind(this);
+		setInterval(locationSource, 500)
 
-	getDemoLocation() {
-		this.props.demoSocket.emit('getDemoLocation', null);
+		//listens for a location update from the demo server
+		this.props.demoSocket.on('updateLocationStateDemo', (data) => {
+			var position = {};
+			position.coords = {};
+			position.coords.latitude = data.lat;
+			position.coords.longitude = data.lon;
+			this.setPosition(position);
+		})
+
+		//listens for a messages update from the main server
+		this.props.mainSocket.on('updateMessagesState', (location) => {
+			var messages = location ? location.messages : null;
+			this.setState({
+				messages: messages
+			})	
+		})
 	}
 
 	//will watch our location and frequently call set position
-	getLocation() {
+	updateLocationState() {
 		if ( navigator.geolocation ) {
 			navigator.geolocation.getCurrentPosition(this.setPosition.bind(this), this.error);
 		} else {
@@ -55,61 +59,29 @@ class App extends React.Component {
 		this.setState({
 			location: location,
 		})
-		this.checkIfInChatRoom()
+		this.updateMessagesState()
 	}
 
-	//sends reqest with our location to server and will set App.state.messages null (not in chatroom) or an array of messages (in chatroom)
-	checkIfInChatRoom() {
-		var self = this;
-		$.ajax({
-		  url: "http://127.0.0.1:3000/location",
-		  type: "GET",
-		  data: { location : this.state.location },
-		  dataType: 'json',
-		}).done(function(data) {
-		  self.setState({
-		  	messages: data.messages
-		  })
-		}).fail(function(err) {
-		  console.log('checkMessages err', err)
-		})
+	//socket request to demo server to update the state of the location of the app
+	updateLocationStateDemo() {
+		this.props.demoSocket.emit('updateLocationStateDemo', null);
 	}
 
-	//sends a request with our location to server and return message will have an empty array which indicates and empty chat room
-	createNewChatRoom() {
-		var self = this;
-		$.ajax({
-		  url: "http://127.0.0.1:3000/",
-		  type: "POST",
-		  data: { location : this.state.location },
-		  dataType: 'json',
-		  success: function(data) {
-		    self.setState({
-		    	messages: data.messages
-		    })
-		  },
-		  error: function(err) {
-		    console.log('sendCreateNewRoom err', err)
-		  },
-		})  
+	//socket request to the main server to update messages state based on location state
+	updateMessagesState() {
+		this.props.mainSocket.emit('updateMessagesState', this.state.location);
 	}
 
-	//sends a request to server with our location and message and will append message to the db
+	//socket request to the main server to create a new chatroom
+	createChatRoom() {
+		this.props.mainSocket.emit('createChatRoom', this.state.location);
+	}
+	
+	//socket request to chatroom to append a new message to
 	addMessageToChatRoom(message) {
-		var self = this;
-		$.ajax({
-      url: "http://127.0.0.1:3000/",
-      type: "PUT",
-      data: { location : this.state.location, message: message },
-      dataType: 'json',
-    }).done(function(data) {
-    	self.setState({
-    		messages: data.messages
-    	})
-    }).fail(function(err) {
-      console.log('sendAddNewMessage err', err)
-    })  
+		this.props.mainSocket.emit('addMessageToChatRoom', {location: this.state.location, message: message});
 	}
+
 
 	render() {
 		var childToRender;
@@ -121,7 +93,7 @@ class App extends React.Component {
 					addMessageToChatRoom={this.addMessageToChatRoom.bind(this)}
 				/>)
 			: (<OutOfChatRoom
-				  createNewChatRoom={this.createNewChatRoom.bind(this)}
+				  createChatRoom={this.createChatRoom.bind(this)}
 				/>);
 
 		let appStyle = {
@@ -150,8 +122,5 @@ class App extends React.Component {
 	}
 }
 
-<<<<<<< HEAD
-export default App;
-=======
-export default App;
->>>>>>> 46ff866e885e8ec4d1f4db19d7de8d90146c4b8d
+
+
