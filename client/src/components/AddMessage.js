@@ -5,7 +5,6 @@ import { FormGroup, ControlLabel, FormControl, Button } from 'react-bootstrap';
 export class AddMessage extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
       message: ''
     }
@@ -25,8 +24,6 @@ export class AddMessage extends React.Component {
   }
 
   render() {
-
-
     return (
       <form>
         <FormGroup controlId="formBasicText">

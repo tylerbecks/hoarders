@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import React from 'react';
+import { Authentication } from './Authentication';
 
 import { Jumbotron } from 'react-bootstrap';
 
@@ -14,6 +15,7 @@ export default class App extends React.Component {
 			messages: null,
 			location: "37.7837-122.4090",
 			demoMode: true,
+			userLoggedIn: true,
 		}
 	}
 
@@ -84,17 +86,6 @@ export default class App extends React.Component {
 
 
 	render() {
-		var childToRender;
-		var isInRoom = !!this.state.messages;
-
-		childToRender = isInRoom	
-			? (<ChatRoom
-					messages={this.state.messages}
-					addMessageToChatRoom={this.addMessageToChatRoom.bind(this)}
-				/>)
-			: (<OutOfChatRoom
-				  createChatRoom={this.createChatRoom.bind(this)}
-				/>);
 
 		let appStyle = {
 		  margin: 'auto auto',
@@ -109,18 +100,42 @@ export default class App extends React.Component {
 		let jumboStyle = {
 			border: '1px solid black',
 		}
+// Render ChatRoom Component vs OutOfChatRoom Component
+		var childToRender;
+		var isInRoom = !!this.state.messages;
 
-		return (
-			<div style={appStyle}>
-				<Jumbotron style={jumboStyle}>
-					<h1>crumbs</h1>
-					<p>your local chatroom</p>
-				</Jumbotron>
-				{childToRender}
+		childToRender = isInRoom	
+			? (<ChatRoom
+					messages={this.state.messages}
+					addMessageToChatRoom={this.addMessageToChatRoom.bind(this)}
+				/>)
+			: (<OutOfChatRoom
+				  createNewChatRoom={this.createNewChatRoom.bind(this)}
+				/>);
+
+
+// Define appLoggedIn render
+		let appLoggedIn = (
+			<div>
+			  <div style={appStyle}>
+				  <Jumbotron style={jumboStyle}>
+				  	<h1>Crumbs</h1>
+				  	<p>your local chatroom</p>
+				  </Jumbotron>
+				  {childToRender}
+			  </div>
 			</div>
-		);
+		)
+
+// Render UserLoggedIn Vs. Authentication Required Based off of this.state.userLoggedIn
+    var appOrAuth;
+    var userLoggedIn = this.state.userLoggedIn;
+
+    appOrAuth = userLoggedIn 
+    ? appLoggedIn 
+    : <Authentication/>
+
+// Return component based off userLoggedIn state
+		return (appOrAuth);
 	}
 }
-
-
-
