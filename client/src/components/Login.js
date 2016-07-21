@@ -14,7 +14,9 @@ export class Login extends React.Component {
             onClick={this.props.signUp}
             bsStyle="link"> Don't have an account? 
           </Button>
-          <Button bsStyle="primary"> Log In </Button>
+          <Button 
+            onClick={this.props.validateUserLogin.bind(this)}
+            bsStyle="primary"> Log In </Button>
         </form>
       </div>
     )

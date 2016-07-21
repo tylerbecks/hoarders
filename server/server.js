@@ -31,7 +31,15 @@ io.on('connection', function (socket) {
   })
 
   socket.on('addMessageToChatRoom', function( msgObj ) {
-    socketHandlers.addMessageToChatRoom(msgObj.location, msgObj.message, socket)
+    socketHandlers.addMessageToChatRoom(msgObj.location, msgObj.message, msgObj.username, socket)
+  })
+
+  socket.on('validateUserLogin', function(userCredentials) {
+    socketHandlers.validateUserLogin(userCredentials.username, userCredentials.password, socket);
+  })
+
+  socket.on('validateUserSignup', function(userCredentials) {
+    socketHandlers.validateUserSignup(userCredentials.username, userCredentials.password, socket);
   })
 });
 
