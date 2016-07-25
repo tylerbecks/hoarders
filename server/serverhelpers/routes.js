@@ -1,23 +1,24 @@
-const socketHandlers = require('../db/tokendb/socketHandlers.js');
+const chatroomController = require('../db/chatroom/chatroomController.js');
+const userController = require('../db/user/userController.js');
 
 module.exports = (socket) => {
   socket.on('updateMessagesState', (location) => {
-    socketHandlers.updateMessagesState(location, socket);
+    chatroomController.updateMessagesState(location, socket);
   });
 
   socket.on('createChatRoom', (location) => {
-    socketHandlers.createChatRoom(location, socket);
+    chatroomController.createChatRoom(location, socket);
   });
 
   socket.on('addMessageToChatRoom', (msgObj) => {
-    socketHandlers.addMessageToChatRoom(msgObj.location, msgObj.message, msgObj.username, socket);
+    chatroomController.addMessageToChatRoom(msgObj.location, msgObj.message, msgObj.username, socket);
   });
 
   socket.on('validateUserLogin', (userCredentials) => {
-    socketHandlers.validateUserLogin(userCredentials.username, userCredentials.password, socket);
+    userController.validateUserLogin(userCredentials.username, userCredentials.password, socket);
   });
 
   socket.on('validateUserSignup', (userCredentials) => {
-    socketHandlers.validateUserSignup(userCredentials.username, userCredentials.password, socket);
+    userController.validateUserSignup(userCredentials.username, userCredentials.password, socket);
   });
 };

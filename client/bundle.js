@@ -21328,7 +21328,7 @@
 
 	  _createClass(Authentication, [{
 	    key: 'handleClick',
-	    value: function handleClick(e) {
+	    value: function handleClick() {
 	      this.setState({
 	        login: !this.state.login
 	      });

@@ -6,36 +6,37 @@ import { UserEntry } from './UserEntry';
 
 export class Authentication extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       login: false,
       usernameText: '',
-      passwordText: ''
-    }
+      passwordText: '',
+    };
   }
 
-  handleClick(e) {
+  handleClick() {
     this.setState({
-      login: !this.state.login
-    })
+      login: !this.state.login,
+    });
   }
 
   handleUserTextChange(e) {
     this.setState({
-      usernameText: e.target.value
+      usernameText: e.target.value,
     });
   }
 
   handlePasswordTextChange(e) {
     this.setState({
-      passwordText: e.target.value
+      passwordText: e.target.value,
     });
   }
 
   // Pass down clickhandler to Login
 
   validateUserLogin() {
-    this.props.mainSocket.emit('validateUserLogin', {username: this.state.usernameText, password: this.state.passwordText});
+    this.props.mainSocket.emit('validateUserLogin', 
+    	{username: this.state.usernameText, password: this.state.passwordText});
   }
 
   validateUserSignup() {
