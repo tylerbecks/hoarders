@@ -1,9 +1,23 @@
-// var tokenController = require('../db/tokendb/tokenController.js');
+const socketHandlers = require('../db/tokendb/socketHandlers.js');
 
-// //routes decorators
-// module.exports = function(app, express) {
-//   app.get('/location', tokenController.getLocationMessages)
-//   app.post('/', tokenController.createToken)
-//   app.put('/', tokenController.writeToToken)
-// }
+module.exports = (socket) => {
+  socket.on('updateMessagesState', (location) => {
+    socketHandlers.updateMessagesState(location, socket);
+  });
 
+  socket.on('createChatRoom', (location) => {
+    socketHandlers.createChatRoom(location, socket);
+  });
+
+  socket.on('addMessageToChatRoom', (msgObj) => {
+    socketHandlers.addMessageToChatRoom(msgObj.location, msgObj.message, msgObj.username, socket);
+  });
+
+  socket.on('validateUserLogin', (userCredentials) => {
+    socketHandlers.validateUserLogin(userCredentials.username, userCredentials.password, socket);
+  });
+
+  socket.on('validateUserSignup', (userCredentials) => {
+    socketHandlers.validateUserSignup(userCredentials.username, userCredentials.password, socket);
+  });
+};
