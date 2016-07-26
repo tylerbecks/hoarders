@@ -1,3 +1,6 @@
+//import io from 'socket.io-client'
+
+
 var socket = io.connect('http://localhost:8000');
 
 var updateMapLocation = function(location) {
