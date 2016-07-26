@@ -24,7 +24,7 @@ var updateServerLocation = function(location) {
 }
 
 $(document).ready(function() {
-  var location = {lat: 37.8049, lon: -122.4194};
+  var location = {lat: 37.799, lon: -122.434};
   updateMapLocation(location)
   updateServerLocation(location)
 

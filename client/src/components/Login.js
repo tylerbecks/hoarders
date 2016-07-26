@@ -1,24 +1,21 @@
 import React from 'react';
-import {Button} from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 
-export class Login extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    return (
-      <div>
-        <form>
-          <Button 
-            onClick={this.props.signUp}
-            bsStyle="link"> Don't have an account? 
-          </Button>
-          <Button 
-            onClick={this.props.validateUserLogin.bind(this)}
-            bsStyle="primary"> Log In </Button>
-        </form>
-      </div>
-    )
-  }
-}
+export const Login = (props) => (
+  <div>
+    <form>
+      <Button
+        onClick={props.signUp}
+        bsStyle="link"
+      >
+        Don't have an account?
+      </Button>
+      <Button
+        onClick={props.validateUserLogin.bind(this)}
+        bsStyle="primary"
+      >
+        Log In
+      </Button>
+    </form>
+  </div>
+);

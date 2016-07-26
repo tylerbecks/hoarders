@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { Authentication } from './Authentication';
 import { Authenticated } from './Authenticated';
 
@@ -63,10 +62,10 @@ export default class App extends React.Component {
 
   //will watch our location and frequently call set position
   updateLocationState() {
-    if ( navigator.geolocation ) {
+    if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(this.setPosition.bind(this), this.error);
     } else {
-      console.log("geolocation not supported");
+      console.log('geolocation not supported');
     }
   }
 
@@ -87,7 +86,7 @@ export default class App extends React.Component {
 
   //socket request to chatroom to append a new message to
   addMessageToChatRoom(message) {
-    this.props.mainSocket.emit('addMessageToChatRoom', {location: this.state.location, message: message, username: this.state.userLoggedIn});
+    this.props.mainSocket.emit('addMessageToChatRoom', { location: this.state.location, message, username: this.state.userLoggedIn });
   }
 
   logOutUser() {

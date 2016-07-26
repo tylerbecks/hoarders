@@ -14,6 +14,14 @@ export class Authentication extends React.Component {
     };
   }
 
+  componentWillMount() {
+    this.validateUserSignup = this.validateUserSignup.bind(this);
+    this.validateUserLogin = this.validateUserLogin.bind(this);
+    this.handleClick = this.handleClick.bind(this);
+    this.handleUserTextChange = this.handleUserTextChange.bind(this);
+    this.handlePasswordTextChange = this.handlePasswordTextChange.bind(this);
+  }
+
   handleClick() {
     this.setState({
       login: !this.state.login,
@@ -35,21 +43,15 @@ export class Authentication extends React.Component {
   // Pass down clickhandler to Login
 
   validateUserLogin() {
-    this.props.mainSocket.emit('validateUserLogin', 
-    	{username: this.state.usernameText, password: this.state.passwordText});
+    this.props.mainSocket.emit('validateUserLogin', { username: this.state.usernameText, password: this.state.passwordText });
   }
 
   validateUserSignup() {
-    this.props.mainSocket.emit('validateUserSignup', {username: this.state.usernameText, password: this.state.passwordText});
+    this.props.mainSocket.emit('validateUserSignup', { username: this.state.usernameText, password: this.state.passwordText });
   }
 
   render() {
-    var pageToRender;
-    var loginPage = !!this.state.login;
-
-// Same as lets from App.js Component for consistency accross the App.
-// Might want to look into doing a separate style sheet and importing the styles.
-    let authStyle = {
+    const authStyle = {
       margin: 'auto auto',
       width: '80%',
       height: '100%',
@@ -57,30 +59,37 @@ export class Authentication extends React.Component {
       padding: '7%',
       textAlign: 'center',
       background: '#CCC',
-    }
+    };
 
-    let jumboStyle = {
+    const jumboStyle = {
       border: '1px solid black',
-    }
+    };
 
-// Render the Login Vs. SignUp based on state of this.state.login
-    pageToRender = loginPage
-     ? (<Login 
-          validateUserLogin={this.validateUserLogin.bind(this)}
-          signUp={this.handleClick.bind(this)}/>) 
-     : (<SignUp
-          validateUserSignup={this.validateUserSignup.bind(this)} 
-          logIn={this.handleClick.bind(this)}/>);
+    const login = (
+      <Login
+        validateUserLogin={this.validateUserLogin}
+        signUp={this.handleClick}
+      />
+    );
+
+    const signup = (
+      <SignUp
+        validateUserSignup={this.validateUserSignup}
+        logIn={this.handleClick}
+      />
+    );
+
+    const pageToRender = !!this.state.login ? login : signup;
 
     return (
       <div style={authStyle}>
         <Jumbotron style={jumboStyle}>
-        <h1> Crumbs </h1>
-        <p> Authentication </p>
+          <h1> Crumbs </h1>
+          <p> Authentication </p>
         </Jumbotron>
         <UserEntry
-          userChange={this.handleUserTextChange.bind(this)}
-          passwordChange={this.handlePasswordTextChange.bind(this)}
+          userChange={this.handleUserTextChange}
+          passwordChange={this.handlePasswordTextChange}
           usernameText={this.state.usernameText}
           passwordText={this.state.passwordText}
         />

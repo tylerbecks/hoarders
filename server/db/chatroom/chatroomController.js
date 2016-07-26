@@ -28,6 +28,7 @@ module.exports = {
   addMessageToChatRoom: (location, message, username, socket) => {
     var tokenDataReturn = {};
     Chatroom.findOne({ location }, (err, tokenData) => {
+      tokenDataReturn = tokenData;
       var newMessages = tokenData.messages;
       newMessages.unshift({ message, username });
       tokenDataReturn.messages = newMessages;

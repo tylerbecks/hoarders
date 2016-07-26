@@ -21205,7 +21205,7 @@
 	      if (navigator.geolocation) {
 	        navigator.geolocation.getCurrentPosition(this.setPosition.bind(this), this.error);
 	      } else {
-	        console.log("geolocation not supported");
+	        console.log('geolocation not supported');
 	      }
 	    }
 
@@ -21327,6 +21327,15 @@
 	  }
 
 	  _createClass(Authentication, [{
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      this.validateUserSignup = this.validateUserSignup.bind(this);
+	      this.validateUserLogin = this.validateUserLogin.bind(this);
+	      this.handleClick = this.handleClick.bind(this);
+	      this.handleUserTextChange = this.handleUserTextChange.bind(this);
+	      this.handlePasswordTextChange = this.handlePasswordTextChange.bind(this);
+	    }
+	  }, {
 	    key: 'handleClick',
 	    value: function handleClick() {
 	      this.setState({
@@ -21363,11 +21372,6 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var pageToRender;
-	      var loginPage = !!this.state.login;
-
-	      // Same as lets from App.js Component for consistency accross the App.
-	      // Might want to look into doing a separate style sheet and importing the styles.
 	      var authStyle = {
 	        margin: 'auto auto',
 	        width: '80%',
@@ -21382,12 +21386,17 @@
 	        border: '1px solid black'
 	      };
 
-	      // Render the Login Vs. SignUp based on state of this.state.login
-	      pageToRender = loginPage ? _react2.default.createElement(_Login.Login, {
-	        validateUserLogin: this.validateUserLogin.bind(this),
-	        signUp: this.handleClick.bind(this) }) : _react2.default.createElement(_SignUp.SignUp, {
-	        validateUserSignup: this.validateUserSignup.bind(this),
-	        logIn: this.handleClick.bind(this) });
+	      var login = _react2.default.createElement(_Login.Login, {
+	        validateUserLogin: this.validateUserLogin,
+	        signUp: this.handleClick
+	      });
+
+	      var signup = _react2.default.createElement(_SignUp.SignUp, {
+	        validateUserSignup: this.validateUserSignup,
+	        logIn: this.handleClick
+	      });
+
+	      var pageToRender = !!this.state.login ? login : signup;
 
 	      return _react2.default.createElement(
 	        'div',
@@ -21407,8 +21416,8 @@
 	          )
 	        ),
 	        _react2.default.createElement(_UserEntry.UserEntry, {
-	          userChange: this.handleUserTextChange.bind(this),
-	          passwordChange: this.handlePasswordTextChange.bind(this),
+	          userChange: this.handleUserTextChange,
+	          passwordChange: this.handlePasswordTextChange,
 	          usernameText: this.state.usernameText,
 	          passwordText: this.state.passwordText
 	        }),
@@ -40775,8 +40784,6 @@
 	});
 	exports.Login = undefined;
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
@@ -40785,51 +40792,32 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var Login = exports.Login = function (_React$Component) {
-	  _inherits(Login, _React$Component);
-
-	  function Login(props) {
-	    _classCallCheck(this, Login);
-
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Login).call(this, props));
-	  }
-
-	  _createClass(Login, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        _react2.default.createElement(
-	          'form',
-	          null,
-	          _react2.default.createElement(
-	            _reactBootstrap.Button,
-	            {
-	              onClick: this.props.signUp,
-	              bsStyle: 'link' },
-	            ' Don\'t have an account?'
-	          ),
-	          _react2.default.createElement(
-	            _reactBootstrap.Button,
-	            {
-	              onClick: this.props.validateUserLogin.bind(this),
-	              bsStyle: 'primary' },
-	            ' Log In '
-	          )
-	        )
-	      );
-	    }
-	  }]);
-
-	  return Login;
-	}(_react2.default.Component);
+	var Login = exports.Login = function Login(props) {
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    _react2.default.createElement(
+	      'form',
+	      null,
+	      _react2.default.createElement(
+	        _reactBootstrap.Button,
+	        {
+	          onClick: props.signUp,
+	          bsStyle: 'link'
+	        },
+	        'Don\'t have an account?'
+	      ),
+	      _react2.default.createElement(
+	        _reactBootstrap.Button,
+	        {
+	          onClick: props.validateUserLogin.bind(undefined),
+	          bsStyle: 'primary'
+	        },
+	        'Log In'
+	      )
+	    )
+	  );
+	};
 
 /***/ },
 /* 439 */
@@ -40842,8 +40830,6 @@
 	});
 	exports.SignUp = undefined;
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
@@ -40852,51 +40838,32 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var SignUp = exports.SignUp = function (_React$Component) {
-	  _inherits(SignUp, _React$Component);
-
-	  function SignUp(props) {
-	    _classCallCheck(this, SignUp);
-
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(SignUp).call(this, props));
-	  }
-
-	  _createClass(SignUp, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        _react2.default.createElement(
-	          'form',
-	          null,
-	          _react2.default.createElement(
-	            _reactBootstrap.Button,
-	            {
-	              onClick: this.props.logIn,
-	              bsStyle: 'link' },
-	            'Already have an account?'
-	          ),
-	          _react2.default.createElement(
-	            _reactBootstrap.Button,
-	            {
-	              onClick: this.props.validateUserSignup.bind(this),
-	              bsStyle: 'primary' },
-	            'Sign Up'
-	          )
-	        )
-	      );
-	    }
-	  }]);
-
-	  return SignUp;
-	}(_react2.default.Component);
+	var SignUp = exports.SignUp = function SignUp(props) {
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    _react2.default.createElement(
+	      'form',
+	      null,
+	      _react2.default.createElement(
+	        _reactBootstrap.Button,
+	        {
+	          onClick: props.logIn,
+	          bsStyle: 'link'
+	        },
+	        'Already have an account?'
+	      ),
+	      _react2.default.createElement(
+	        _reactBootstrap.Button,
+	        {
+	          onClick: props.validateUserSignup.bind(undefined),
+	          bsStyle: 'primary'
+	        },
+	        'Sign Up'
+	      )
+	    )
+	  );
+	};
 
 /***/ },
 /* 440 */
@@ -40909,57 +40876,34 @@
 	});
 	exports.UserEntry = undefined;
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var UserEntry = exports.UserEntry = function (_React$Component) {
-	  _inherits(UserEntry, _React$Component);
-
-	  function UserEntry(props) {
-	    _classCallCheck(this, UserEntry);
-
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(UserEntry).call(this, props));
-	  }
-
-	  _createClass(UserEntry, [{
-	    key: "render",
-	    value: function render() {
-	      return _react2.default.createElement(
-	        "div",
-	        null,
-	        _react2.default.createElement(
-	          "form",
-	          null,
-	          _react2.default.createElement("input", {
-	            onChange: this.props.userChange,
-	            value: this.props.usernameText,
-	            type: "text",
-	            placeholder: "username"
-	          }),
-	          _react2.default.createElement("input", {
-	            onChange: this.props.passwordChange,
-	            value: this.props.passwordText,
-	            type: "password",
-	            placeholder: "password"
-	          })
-	        )
-	      );
-	    }
-	  }]);
-
-	  return UserEntry;
-	}(_react2.default.Component);
+	var UserEntry = exports.UserEntry = function UserEntry(props) {
+	  return _react2.default.createElement(
+	    "div",
+	    null,
+	    _react2.default.createElement(
+	      "form",
+	      null,
+	      _react2.default.createElement("input", {
+	        onChange: props.userChange,
+	        value: props.usernameText,
+	        type: "text",
+	        placeholder: "username"
+	      }),
+	      _react2.default.createElement("input", {
+	        onChange: props.passwordChange,
+	        value: props.passwordText,
+	        type: "password",
+	        placeholder: "password"
+	      })
+	    )
+	  );
+	};
 
 /***/ },
 /* 441 */
@@ -40985,6 +40929,16 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var Authenticated = exports.Authenticated = function Authenticated(props) {
+	  var appStyle = {
+	    margin: 'auto auto',
+	    width: '80%',
+	    height: '100%',
+	    border: '1px solid black',
+	    padding: '7%',
+	    textAlign: 'center',
+	    background: '#CCC'
+	  };
+
 	  var chatRoom = _react2.default.createElement(_ChatRoom.ChatRoom, {
 	    messages: props.messages,
 	    user: props.userLoggedIn,
@@ -40996,16 +40950,6 @@
 	  });
 
 	  var childToRender = !!props.messages ? chatRoom : outOfChatRoom;
-
-	  var appStyle = {
-	    margin: 'auto auto',
-	    width: '80%',
-	    height: '100%',
-	    border: '1px solid black',
-	    padding: '7%',
-	    textAlign: 'center',
-	    background: '#CCC'
-	  };
 
 	  return _react2.default.createElement(
 	    'div',
@@ -41052,13 +40996,9 @@
 	});
 	exports.ChatRoom = undefined;
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
-
-	var _reactBootstrap = __webpack_require__(174);
 
 	var _AddMessage = __webpack_require__(443);
 
@@ -41066,35 +41006,14 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var ChatRoom = exports.ChatRoom = function (_React$Component) {
-	  _inherits(ChatRoom, _React$Component);
-
-	  function ChatRoom(props) {
-	    _classCallCheck(this, ChatRoom);
-
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(ChatRoom).call(this, props));
-	  }
-
-	  _createClass(ChatRoom, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        _react2.default.createElement(_AddMessage.AddMessage, { addMessageToChatRoom: this.props.addMessageToChatRoom }),
-	        _react2.default.createElement(_MessageList.MessageList, { messages: this.props.messages })
-	      );
-	    }
-	  }]);
-
-	  return ChatRoom;
-	}(_react2.default.Component);
+	var ChatRoom = exports.ChatRoom = function ChatRoom(props) {
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    _react2.default.createElement(_AddMessage.AddMessage, { addMessageToChatRoom: props.addMessageToChatRoom }),
+	    _react2.default.createElement(_MessageList.MessageList, { messages: props.messages })
+	  );
+	};
 
 /***/ },
 /* 443 */
@@ -41138,6 +41057,12 @@
 	  }
 
 	  _createClass(AddMessage, [{
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      this.handleInputChange = this.handleInputChange.bind(this);
+	      this.handleSubmit = this.handleSubmit.bind(this);
+	    }
+	  }, {
 	    key: 'handleInputChange',
 	    value: function handleInputChange(e) {
 	      this.setState({
@@ -41170,12 +41095,15 @@
 	            type: 'text',
 	            value: this.state.message,
 	            placeholder: 'Enter text',
-	            onChange: this.handleInputChange.bind(this)
+	            onChange: this.handleInputChange
 	          }),
 	          _react2.default.createElement('br', null),
 	          _react2.default.createElement(
 	            _reactBootstrap.Button,
-	            { bsStyle: 'primary', onClick: this.handleSubmit.bind(this) },
+	            {
+	              bsStyle: 'primary',
+	              onClick: this.handleSubmit
+	            },
 	            'Add message'
 	          )
 	        )
@@ -41207,15 +41135,14 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var MessageList = exports.MessageList = function MessageList(_ref) {
-	  var messages = _ref.messages;
+	var MessageList = exports.MessageList = function MessageList(props) {
 	  return _react2.default.createElement(
 	    _reactBootstrap.Panel,
 	    { style: { fontWeight: 'bold' }, header: 'Chatroom messages' },
 	    _react2.default.createElement(
 	      _reactBootstrap.ListGroup,
 	      { fill: true },
-	      messages.map(function (message) {
+	      props.messages.map(function (message) {
 	        return _react2.default.createElement(_MessageListEntry.MessageListEntry, { message: message });
 	      })
 	    )
@@ -41245,14 +41172,11 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var MessageListEntry = exports.MessageListEntry = function MessageListEntry(_ref) {
-	  var message = _ref.message;
+	var MessageListEntry = exports.MessageListEntry = function MessageListEntry(props) {
 	  return _react2.default.createElement(
 	    _reactBootstrap.ListGroupItem,
 	    null,
-	    ' ',
-	    message.username + ' ' + message.message + ' ' + (0, _moment2.default)(message.createdAt).fromNow(),
-	    ' '
+	    props.message.username + ' ' + props.message.message + ' ' + (0, _moment2.default)(props.message.createdAt).fromNow()
 	  );
 	};
 
@@ -55315,37 +55239,45 @@
 	});
 	exports.OutOfChatRoom = undefined;
 
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
 	var _reactBootstrap = __webpack_require__(174);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var style = {
 	  margin: 'auto auto',
 	  height: '100%'
 	};
 
-	var OutOfChatRoom = exports.OutOfChatRoom = function OutOfChatRoom(_ref) {
-	  var createChatRoom = _ref.createChatRoom;
-	  return React.createElement(
+	var OutOfChatRoom = exports.OutOfChatRoom = function OutOfChatRoom(props) {
+	  return _react2.default.createElement(
 	    'div',
 	    { style: style },
-	    React.createElement(
+	    _react2.default.createElement(
 	      'h2',
 	      null,
 	      'you are not in a Chatroom!'
 	    ),
-	    React.createElement('br', null),
-	    React.createElement(
+	    _react2.default.createElement('br', null),
+	    _react2.default.createElement(
 	      'p',
 	      null,
 	      'create a chatroom at this spot to start a thread. Leave a message for someone else to find later!'
 	    ),
-	    React.createElement('br', null),
-	    React.createElement(
+	    _react2.default.createElement('br', null),
+	    _react2.default.createElement(
 	      _reactBootstrap.Button,
-	      { bsStyle: 'primary', onClick: createChatRoom },
+	      {
+	        bsStyle: 'primary',
+	        onClick: props.createChatRoom
+	      },
 	      'Create a new Chatroom!'
 	    ),
-	    React.createElement('br', null),
-	    React.createElement('br', null)
+	    _react2.default.createElement('br', null),
+	    _react2.default.createElement('br', null)
 	  );
 	};
 
