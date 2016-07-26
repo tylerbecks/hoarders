@@ -4,6 +4,16 @@ import { OutOfChatRoom } from './OutOfChatRoom.js';
 import { Jumbotron, Button } from 'react-bootstrap';
 
 export const Authenticated = (props) => {
+  const appStyle = {
+    margin: 'auto auto',
+    width: '80%',
+    height: '100%',
+    border: '1px solid black',
+    padding: '7%',
+    textAlign: 'center',
+    background: '#CCC',
+  };
+
   const chatRoom = (
     <ChatRoom
       messages={props.messages}
@@ -18,17 +28,8 @@ export const Authenticated = (props) => {
     />
   );
 
-  let childToRender = !!props.messages ? chatRoom : outOfChatRoom;
+  const childToRender = !!props.messages ? chatRoom : outOfChatRoom;
 
-  let appStyle = {
-    margin: 'auto auto',
-    width: '80%',
-    height: '100%',
-    border: '1px solid black',
-    padding: '7%',
-    textAlign: 'center',
-    background: '#CCC',
-  };
 
   return (
     <div style={appStyle}>
