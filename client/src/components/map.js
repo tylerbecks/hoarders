@@ -18,7 +18,7 @@ export default class OurMap extends React.Component {
     // google map component from google-map-react
     return (
       <GoogleMap bootstrapURLKeys={{ key: 'AIzaSyDZjkD659gGlpyUKXU14_Tomji58BSfI0A', language: 'en' }} options={this.createMapOptions} center={this.props.center} zoom={this.props.zoom} >
-        <UserSpot user={'Davey'} lat={37.799} lng={-122.434} />
+        <UserSpot user={'Davey'} lat={this.props.dummyLat} lng={this.props.dummyLong} />
       </GoogleMap>
     );
   }
