@@ -1,7 +1,7 @@
 import React from 'react';
-import { ChatRoom } from './ChatRoom.js';
-import { OutOfChatRoom } from './OutOfChatRoom.js';
 import OurMap from './map.js';
+// import { ChatRoom } from './ChatRoom.js';
+// import { OutOfChatRoom } from './OutOfChatRoom.js';
 // import { Jumbotron, Button } from 'react-bootstrap';
 
 export const Authenticated = (props) => {
@@ -15,42 +15,31 @@ export const Authenticated = (props) => {
     background: '#CCC',
   };
 
-  const chatRoom = (
-    <ChatRoom
-      messages={props.messages}
-      user={props.userLoggedIn}
-      addMessageToChatRoom={props.addMessageToChatRoom}
-    />
-  );
+  let ourMap;
+  const mapStyle = { height: screen.height - (0.15 * screen.height) };
 
-  const outOfChatRoom = (
-    <OutOfChatRoom
-      createChatRoom={props.createChatRoom}
-    />
-  );
+  // render the map in all cases
+  const googleMap = (
+    <div className="map-wrapper" style={mapStyle}>
+      <OurMap
+        center={props.center}
+        zoom={props.zoom}
+        treasureChestData={props.treasureChestData}
+        dummyLat={props.dummyLat}
+        dummyLong={props.dummyLong}
+      />
+    </div>);
 
-  const childToRender = !!props.messages ? chatRoom : outOfChatRoom;
-
-
-
-  var ourMap;
-  var mapStyle = { height: screen.height - (0.15 * screen.height) };
-
-  //render the map in all cases
-  var googleMap = <div className='map-wrapper' style={mapStyle} >
-                    <OurMap center={props.center} zoom={props.zoom} dummyLat={props.dummyLat} dummyLong={props.dummyLong} />
-                  </div>
-
-  ourMap = <div className='col-xs-12 wrapper'>
-            {googleMap}
-           </div>;
+  ourMap = (
+    <div className="col-xs-12 wrapper">
+      {googleMap}
+    </div>);
 
   return (
     <div>
       {ourMap}
     </div>
   );
-
 };
 
 
