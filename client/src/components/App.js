@@ -10,7 +10,9 @@ export default class App extends React.Component {
       messages: null,
       location: '37.7837-122.4090',
       demoMode: true,
-      userLoggedIn: false,
+      userLoggedIn: true,
+      center: { lat: 37.75, lng: -122.44 },
+      zoom: 13,
     };
   }
 
@@ -103,6 +105,8 @@ export default class App extends React.Component {
         addMessageToChatRoom={this.addMessageToChatRoom}
         createChatRoom={this.createChatRoom}
         logOutUser={this.logOutUser}
+        zoom={this.state.zoom}
+        center={this.state.center}
       />
     );
 

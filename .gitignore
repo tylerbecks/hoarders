@@ -3,7 +3,7 @@ logs
 *.log
 npm-debug.log*
 server/db/config.js
-client/src/bundle.js
+client/bundle.js
 
 # Runtime data
 pids
