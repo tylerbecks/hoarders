@@ -6,9 +6,8 @@ export default class UserSpot extends React.Component {
   constructor(props) {
     super(props);
   }
-  
-  render() {
 
+  render() {
     var style = userSpotStyle;
 
     return (

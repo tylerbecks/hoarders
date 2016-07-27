@@ -1,8 +1,8 @@
 import React from 'react';
 import { ChatRoom } from './ChatRoom.js';
 import { OutOfChatRoom } from './OutOfChatRoom.js';
-import { Jumbotron, Button } from 'react-bootstrap';
 import OurMap from './map.js';
+// import { Jumbotron, Button } from 'react-bootstrap';
 
 export const Authenticated = (props) => {
   const appStyle = {
