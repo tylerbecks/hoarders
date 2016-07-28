@@ -75,15 +75,8 @@ module.exports = {
   getUserScore: (username, socket) => {
     User.findOne({ username }, (err, userData) => {
       if (userData) {
-<<<<<<< ac3a4fdeaaa561979fb14c933a1458cd881b9352
-        // console.log('passing user data', userData.points);
-        socket.emit('getUserScore', userData.points); 
+        socket.emit('getUserScore', userData.points);
       } else {
-        // console.log('passing zero back', userData.points);
-=======
-        socket.emit('getUserScore', userData.points); 
-      } else {
->>>>>>> Clean up commented code
         socket.emit('getUserScore', 0);
       }
     });

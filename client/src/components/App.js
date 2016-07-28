@@ -10,7 +10,7 @@ export default class App extends React.Component {
       messages: null,
       location: '37.7835-122.4096',
       userLoggedIn: !!localStorage.token,
-      username: '',
+      username: localStorage.token,
       center: { lat: 37.7843, lng: -122.4096 },
       zoom: 17,
       counter: 0.0001,
