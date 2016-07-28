@@ -80,10 +80,10 @@ module.exports = {
     User.findOne({ username }, (err, userData) => {
       console.log('the userdata is, ', userData);
       if (userData) {
-        console.log('passing user data', userData.points);
+        // console.log('passing user data', userData.points);
         socket.emit('getUserScore', userData.points); 
       } else {
-        console.log('passing zero back', userData.points);
+        // console.log('passing zero back', userData.points);
         socket.emit('getUserScore', 0);
       }
     })
