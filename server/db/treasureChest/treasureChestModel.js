@@ -6,4 +6,4 @@ const treasureSchema = mongoose.Schema({
 
 const TreasureChest = mongoose.model('TresureChest', treasureSchema);
 
-module.exports = TresureChest;
+module.exports = TreasureChest;

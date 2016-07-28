@@ -36,6 +36,7 @@ export default class App extends React.Component {
       location: '37.7835-122.4096',
       // demoMode: true,
       userLoggedIn: true,
+      username: 'Tyler',
       center: { lat: 37.7843, lng: -122.4096 },
       zoom: 15,
       counter: 0.0001,
@@ -45,8 +46,6 @@ export default class App extends React.Component {
   }
 
   componentWillMount() {
-    // this.addMessageToChatRoom = this.addMessageToChatRoom.bind(this);
-    // this.createChatRoom = this.createChatRoom.bind(this);
     this.logOutUser = this.logOutUser.bind(this);
 
     // selects and executes which source to use for setting the location state of
@@ -55,24 +54,28 @@ export default class App extends React.Component {
     setInterval(locationSource, 2000);
 
     // listens for a messages update from the main server
-    this.props.mainSocket.on('updateMessagesState', (location) => {
-        if (location) {
-          this.setState({
-            score: score++
-          });
-          this.updateUserPoints();
-        }
-      });
+    this.props.mainSocket.on('updateTreasureState', (location) => {
+      this.updateUserPoints();
+    });
 
-    this.props.mainSocket.on('Authentication', (user) => {
+    this.prop.mainSocket.on('updateUserPoints', (results) => {
+      if (results) {
+        this.state.score++;
+      }
+    });
+
+    this.props.mainSocket.on('Authentication', (userDetails) => {
       this.setState({
-        userLoggedIn: user,
+        userLoggedIn: userDetails.userLoggedIn,
+        username: userDetails.username
       });
     });
   }
 
   updateUserPoints() {
-    this.props.mainSocket.emit('updateUserPoints', this.state.score)
+    var userObj = { username: this.state.username, location: this.state.location}; 
+
+    this.props.mainSocket.emit('updateUserPoints', userObj);
   }
   // will continually update our location state with our new position
   // returned from navigator.geolocation and check if we are in chat room
@@ -83,13 +86,13 @@ export default class App extends React.Component {
     this.setState({
       location,
     });
-    this.updateMessagesState();
+    this.updateTreasureState();
   }
 
   // will watch our location and frequently call set position
   updateLocationState() {
     //need this, every individual call to move
-    var dummyLat = 37.7800;
+    var dummyLat = 37.7840;
     var dummyLon = -122.4096;
     let position = {};
     position.coords = {};
@@ -114,23 +117,11 @@ export default class App extends React.Component {
   }
 
   // socket request to demo server to update the state of the location of the app
-  updateLocationStateDemo() {
-    this.props.demoSocket.emit('updateLocationStateDemo', null);
-  }
+ 
 
   // socket request to the main server to update messages state based on location state
-  updateMessagesState() {
-    this.props.mainSocket.emit('updateMessagesState', this.state.location);
-  }
-
-  // socket request to the main server to create a new chatroom
-  createChatRoom() {
-    this.props.mainSocket.emit('createChatRoom', this.state.location);
-  }
-
-  // socket request to chatroom to append a new message to
-  addMessageToChatRoom(message) {
-    this.props.mainSocket.emit('addMessageToChatRoom', { location: this.state.location, message, username: this.state.userLoggedIn });
+  updateTreasureState() {
+    this.props.mainSocket.emit('updateTreasureState', this.state.location);
   }
 
   logOutUser() {

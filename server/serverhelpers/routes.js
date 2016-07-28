@@ -3,24 +3,12 @@ const userController = require('../db/user/userController.js');
 const treasureChestController = require('../db/treasureChest/treasureChestController.js');
 
 module.exports = (socket) => {
-  socket.on('updateMessagesState', (location) => {
-    chatroomController.updateMessagesState(location, socket);
+  socket.on('updateTreasureState', (location) => {
+    treasureChestController.updateTreasureState(location, socket);
   });
-
-  // socket.on('createChatRoom', (location) => {
-  //   chatroomController.createChatRoom(location, socket);
-  // });
-
-  // socket.on('addMessageToChatRoom', (msgObj) => {
-  //   chatroomController.addMessageToChatRoom(msgObj.location, msgObj.message, msgObj.username, socket);
-  // });
 
   socket.on('validateUserLogin', (userCredentials) => {
     userController.validateUserLogin(userCredentials.username, userCredentials.password, socket);
-  });
-
-  socket.on('updateUserPoints', (newScore) => {
-    // userController.updateUserPoints(newScore, socket);
   });
 
   socket.on('validateUserSignup', (userCredentials) => {
@@ -28,8 +16,6 @@ module.exports = (socket) => {
   });
 
   socket.on('updateUserPoints', (userObj) => {
-    userController.updateUserPoints(userObj.username);
+    userController.updateUserPoints(userObj.username, userObj.location);
   });
-};
-
 };

@@ -8,8 +8,16 @@ module.exports = {
       var user = false;
       if (userData) {
         user = userData.password === password ? username : false;
+        if (user) {
+          let username = userData.username;
+        } else {
+          let username = undefined; 
+        }
       }
-      socket.emit('Authentication', user);
+
+      let userObj = { username: username, userLoggedIn: user};
+
+      socket.emit('Authentication', userObj);
     });
   },
 
@@ -30,10 +38,22 @@ module.exports = {
     });
   },
 
-  updateUserPoints: (username, socket) => {
+  updateUserPoints: (username, location,  socket) => {
     User.findOne({ username }), (err, userData) => { 
       if (userData) {
-        userData.points++; 
+        let flag = true; 
+        for (var i = 0; i < userData.locations.length; i++) {
+          if (userData.locations[i] === location) {
+            flag = false;
+          }
+        }
+        if (flag) {
+          userData.locations.push(location);
+          userData.points++;
+          socket.emit('updateUserPoints', true);
+        } else {
+          socket.emit('updateUserPoints', false);
+        }
       }
     }
   }
