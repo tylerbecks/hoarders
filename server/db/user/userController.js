@@ -8,16 +8,13 @@ module.exports = {
       var user = false;
       if (userData) {
         user = userData.password === password ? username : false;
-        if (user) {
-          var username = userData.username;
-        } else {
-          var username = undefined;
+        if (!user) {
+          socket.emit('Authentication', false);
         }
+        socket.emit('Authentication', userData);
+      } else {
+        socket.emit('Authentication', false);
       }
-
-      var userObj = { username: username, userLoggedIn: user };
-
-      socket.emit('Authentication', userObj);
     });
   },
 
@@ -29,8 +26,8 @@ module.exports = {
         User.create({
           username,
           password,
-        }).then(() => {
-          socket.emit('Authentication', username);
+        }).then((createdUser) => {
+          socket.emit('Authentication', createdUser);
         }).catch((err) => {
           console.log('Failed to create User Data', err);
         });

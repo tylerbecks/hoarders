@@ -35,7 +35,7 @@ export default class App extends React.Component {
       messages: null,
       location: '37.7835-122.4096',
       // demoMode: true,
-      userLoggedIn: true,
+      userLoggedIn: !!localStorage.token,
       username: 'Tyler',
       center: { lat: 37.7843, lng: -122.4096 },
       zoom: 15,
@@ -67,16 +67,18 @@ export default class App extends React.Component {
 
     this.props.mainSocket.on('updateUserPoints', (results) => {
       if (results) {
-        console.log('Here is your score: ', this.state.score);
         this.state.score++;
       }
     });
 
     this.props.mainSocket.on('Authentication', (userDetails) => {
-      this.setState({
-        userLoggedIn: userDetails.userLoggedIn,
-        username: userDetails.username,
-      });
+      if (userDetails) {
+        this.setState({
+          userLoggedIn: true,
+          username: userDetails.username,
+        });
+        localStorage.token = userDetails.username;
+      }
     });
   }
 
@@ -136,17 +138,20 @@ export default class App extends React.Component {
     this.props.mainSocket.emit('updateTreasureState', this.state.location);
   }
 
-  logOutUser() {
+  logOutUser(e) {
+    e.preventDefault();
     this.setState({
       userLoggedIn: false,
     });
+    delete localStorage.token;
   }
 
   render() {
     const loggedIn = (
       <Authenticated
-        dummyLat={Number(this.state.location.slice(0,6))}
+        dummyLat={Number(this.state.location.slice(0, 6))}
         dummyLong={-122.4096}
+        username={this.state.username}
         messages={this.state.messages}
         userLoggedIn={this.state.userLoggedIn}
         addMessageToChatRoom={this.addMessageToChatRoom}

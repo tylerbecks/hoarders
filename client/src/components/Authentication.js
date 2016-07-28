@@ -1,8 +1,6 @@
 import React from 'react';
-import { Jumbotron } from 'react-bootstrap';
 import { Login } from './Login';
 import { SignUp } from './SignUp';
-import { UserEntry } from './UserEntry';
 
 export class Authentication extends React.Component {
   constructor(props) {
@@ -22,7 +20,8 @@ export class Authentication extends React.Component {
     this.handlePasswordTextChange = this.handlePasswordTextChange.bind(this);
   }
 
-  handleClick() {
+  handleClick(e) {
+    e.preventDefault();
     this.setState({
       login: !this.state.login,
     });
@@ -41,34 +40,29 @@ export class Authentication extends React.Component {
   }
 
   // Pass down clickhandler to Login
-
-  validateUserLogin() {
-    this.props.mainSocket.emit('validateUserLogin', { username: this.state.usernameText, password: this.state.passwordText });
+  validateUserLogin(e) {
+    e.preventDefault();
+    this.props.mainSocket.emit('validateUserLogin',
+      { username: this.state.usernameText,
+        password: this.state.passwordText });
   }
 
-  validateUserSignup() {
-    this.props.mainSocket.emit('validateUserSignup', { username: this.state.usernameText, password: this.state.passwordText });
+  validateUserSignup(e) {
+    e.preventDefault();
+    this.props.mainSocket.emit('validateUserSignup',
+      { username: this.state.usernameText,
+        password: this.state.passwordText });
   }
 
   render() {
-    const authStyle = {
-      margin: 'auto auto',
-      width: '80%',
-      height: '100%',
-      border: '1px solid black',
-      padding: '7%',
-      textAlign: 'center',
-      background: '#CCC',
-    };
-
-    const jumboStyle = {
-      border: '1px solid black',
-    };
-
     const login = (
       <Login
         validateUserLogin={this.validateUserLogin}
         signUp={this.handleClick}
+        userChange={this.handleUserTextChange}
+        passwordChange={this.handlePasswordTextChange}
+        usernameText={this.state.usernameText}
+        passwordText={this.state.passwordText}
       />
     );
 
@@ -76,23 +70,17 @@ export class Authentication extends React.Component {
       <SignUp
         validateUserSignup={this.validateUserSignup}
         logIn={this.handleClick}
+        userChange={this.handleUserTextChange}
+        passwordChange={this.handlePasswordTextChange}
+        usernameText={this.state.usernameText}
+        passwordText={this.state.passwordText}
       />
     );
 
     const pageToRender = !!this.state.login ? login : signup;
 
     return (
-      <div style={authStyle}>
-        <Jumbotron style={jumboStyle}>
-          <h1> Crumbs </h1>
-          <p> Authentication </p>
-        </Jumbotron>
-        <UserEntry
-          userChange={this.handleUserTextChange}
-          passwordChange={this.handlePasswordTextChange}
-          usernameText={this.state.usernameText}
-          passwordText={this.state.passwordText}
-        />
+      <div>
         {pageToRender}
       </div>
     );
