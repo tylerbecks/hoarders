@@ -9,3 +9,20 @@
 .navbar-toggle {
   z-index:3;
 }
+.wrapper {
+  padding: 0;
+}
+.welcome {
+  text-align: center;
+}
+.authComponent {
+  float: none;
+  margin: auto;
+}
+.clickable {
+  font-weight: bold;
+}
+.clickable:hover {
+  cursor: pointer;
+  color: #006dcc;
+}

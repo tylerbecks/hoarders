@@ -18,7 +18,7 @@ export const Authenticated = (props) => {
   };
 
   let ourMap;
-  const mapStyle = { height: screen.height - (0.15 * screen.height) };
+  const mapStyle = { height: screen.height - (0.05 * screen.height) };
 
   // render the map in all cases
   const googleMap = (
@@ -39,7 +39,7 @@ export const Authenticated = (props) => {
 
   return (
     <div>
-      <MyNav score={props.score} />
+      <MyNav score={props.score} logOutUser={props.logOutUser} username={props.username} />
       {ourMap}
     </div>
   );
