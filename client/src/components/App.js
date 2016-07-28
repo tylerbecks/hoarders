@@ -49,8 +49,8 @@ export default class App extends React.Component {
     // this.createChatRoom = this.createChatRoom.bind(this);
     this.logOutUser = this.logOutUser.bind(this);
 
-    // selects and executes which source to use for setting the location state of 
-    // user. 
+    // selects and executes which source to use for setting the location state of
+    // user.
     const locationSource = this.updateLocationState.bind(this);
     setInterval(locationSource, 2000);
 
@@ -58,12 +58,11 @@ export default class App extends React.Component {
     this.props.mainSocket.on('updateMessagesState', (location) => {
         if (location) {
           this.setState({
-            score++
-          })
+            score: score++
+          });
           this.updateUserPoints();
         }
       });
-    });
 
     this.props.mainSocket.on('Authentication', (user) => {
       this.setState({
