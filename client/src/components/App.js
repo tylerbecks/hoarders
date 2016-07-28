@@ -90,7 +90,6 @@ export default class App extends React.Component {
     if (dummyData.length) {
       for (var i = 0; i < dummyData.length; i++) {
         if (this.state.location === dummyData[i].loc) {
-          console.log('IM IN');
           this.updateUserPoints();
         }
       }
