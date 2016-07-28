@@ -38,8 +38,9 @@ module.exports = {
     });
   },
 
-  updateUserPoints: (username, location, socket) => {
-    User.findOne({ 'username': username }, (err, userData) => {
+  updateUserPoints: (username, location,  socket) => {
+    User.findOne({ username }, (err, userData) => { 
+      console.log('the userdata', userData)
       if (userData) {
         var flag = true;
         for (var i = 0; i < userData.locations.length; i++) {

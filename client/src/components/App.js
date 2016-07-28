@@ -62,7 +62,6 @@ export default class App extends React.Component {
     });
 
     this.props.mainSocket.on('updateUserPoints', (results) => {
-      console.log('Im in it baby', results);
       if (results) {
         console.log('Here is your score: ', this.state.score);
         this.state.score++;
