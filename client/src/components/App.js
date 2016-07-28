@@ -55,11 +55,16 @@ export default class App extends React.Component {
 
     // listens for a messages update from the main server
     this.props.mainSocket.on('updateTreasureState', (location) => {
-      this.updateUserPoints();
+      console.log('Booty on the clients face', location);
+      if (location) {
+        this.updateUserPoints();
+      }
     });
 
-    this.prop.mainSocket.on('updateUserPoints', (results) => {
+    this.props.mainSocket.on('updateUserPoints', (results) => {
+      console.log('Im in it baby', results);
       if (results) {
+        console.log('Here is your score: ', this.state.score);
         this.state.score++;
       }
     });
@@ -67,13 +72,14 @@ export default class App extends React.Component {
     this.props.mainSocket.on('Authentication', (userDetails) => {
       this.setState({
         userLoggedIn: userDetails.userLoggedIn,
-        username: userDetails.username
+        username: userDetails.username,
       });
     });
   }
 
   updateUserPoints() {
-    var userObj = { username: this.state.username, location: this.state.location}; 
+    var userObj = { username: this.state.username, location: this.state.location };
+    console.log('Sooooooooo many points rn', userObj);
 
     this.props.mainSocket.emit('updateUserPoints', userObj);
   }
@@ -91,8 +97,8 @@ export default class App extends React.Component {
 
   // will watch our location and frequently call set position
   updateLocationState() {
-    //need this, every individual call to move
-    var dummyLat = 37.7840;
+    // need this, every individual call to move
+    var dummyLat = 37.7847;
     var dummyLon = -122.4096;
     let position = {};
     position.coords = {};
@@ -102,9 +108,9 @@ export default class App extends React.Component {
     var reCount = this.state.counter + 0.0001;
     this.setState({
       counter: reCount,
-    })
+    });
 
-    //listens for a location update from the demo server
+    // listens for a location update from the demo server
     // this.props.demoSocket.on('updateLocationStateDemo', (data) => {
     //   this.setPosition(position);
     // });
@@ -117,7 +123,7 @@ export default class App extends React.Component {
   }
 
   // socket request to demo server to update the state of the location of the app
- 
+
 
   // socket request to the main server to update messages state based on location state
   updateTreasureState() {

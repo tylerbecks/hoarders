@@ -9,4 +9,9 @@ const userSchema = mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
+// User.create({ 'username': 'Tyler' }, function(err, user) {
+//   if (err) return handleError(err);
+// });
+
+
 module.exports = User;
