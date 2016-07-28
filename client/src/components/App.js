@@ -38,7 +38,7 @@ export default class App extends React.Component {
       location: '37.7835-122.4096',
       // demoMode: true,
       userLoggedIn: !!localStorage.token,
-      username: 'Tyler',
+      username: '',
       center: { lat: 37.7810, lng: -122.4096 },
       zoom: 15,
       counter: 0.0001,
