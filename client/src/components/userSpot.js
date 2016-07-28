@@ -12,7 +12,6 @@ export default class UserSpot extends React.Component {
 
     return (
       <div style={outerDivStyle}>
-        {this.props.user}
         <div style={style}>
         </div>
       </div>

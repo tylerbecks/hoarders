@@ -2,8 +2,6 @@ import React from 'react';
 import { Authentication } from './Authentication';
 import { Authenticated } from './Authenticated';
 
-
-
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -11,7 +9,6 @@ export default class App extends React.Component {
     this.state = {
       messages: null,
       location: '37.7835-122.4096',
-      // demoMode: true,
       userLoggedIn: !!localStorage.token,
       username: '',
       center: { lat: 37.7843, lng: -122.4096 },
@@ -32,20 +29,20 @@ export default class App extends React.Component {
     // user.
   }
 
-componentDidMount() {
+  componentDidMount() {
     const locationSource = this.updateLocationState.bind(this);
     setInterval(locationSource, 2000);
 
 
     this.props.mainSocket.on('getUserScore', (score) => {
       this.setState({
-        score: score
-      })
+        score: score,
+      });
     });
 
     this.props.mainSocket.on('getTreasureChests', (chests) => {
-      this.setState({ treasureChestData: chests })
-    })
+      this.setState({ treasureChestData: chests });
+    });
 
     this.props.mainSocket.on('updateUserPoints', (results) => {
       if (results) {
@@ -62,16 +59,14 @@ componentDidMount() {
         localStorage.token = userDetails.username;
       }
     });
+  }
 
 
-}
-
-  
-  updateTreasureState () {
+  updateTreasureState() {
     if (this.state.treasureChestData.length) {
-      for (var i = 0; i < this.state.treasureChestData.length; i++) {
-        console.log('eoiutpwoireut',this.state.location)
-        console.log('kajdfhglakdjf',this.state.treasureChestData[i].location)
+      for (let i = 0; i < this.state.treasureChestData.length; i++) {
+        console.log('eoiutpwoireut', this.state.location);
+        console.log('kajdfhglakdjf', this.state.treasureChestData[i].location);
         // var newLocA = this.state.location.substring(0, 7);
         // var newLocB = this.state.location.substring(8, 17);
         // var newLoc = String(newLocA) + String(newLocB);
@@ -84,7 +79,7 @@ componentDidMount() {
   }
 
   getUserScore() {
-    this.props.mainSocket.emit('getUserScore', {username: this.state.username});
+    this.props.mainSocket.emit('getUserScore', { username: this.state.username });
   }
 
   getTreasureChests() {
@@ -105,12 +100,12 @@ componentDidMount() {
     this.setState({
       location,
     });
-    console.log('setPos msetting this in state: ', location)
+    console.log('setPos msetting this in state: ', location);
     this.updateTreasureState();
   }
 
   getUserLocation() {
-    const that = this; 
+    const that = this;
     if (navigator.geolocation) {
       console.log('Geolocation is supported!');
       navigator.geolocation.getCurrentPosition((position, error) => {
@@ -119,7 +114,7 @@ componentDidMount() {
     }
   }
 
-  //will watch our location and frequently call set position
+  // will watch our location and frequently call set position
   updateLocationState() {
     // need this, every individual call to move
     console.log('updating location state!');
@@ -153,7 +148,7 @@ componentDidMount() {
     const loggedIn = (
       <Authenticated
         username={this.state.username}
-        dummyLat={Number(this.state.location.slice(0,7))}
+        dummyLat={Number(this.state.location.slice(0, 7))}
         dummyLong={-122.4096}
         messages={this.state.messages}
         userLoggedIn={this.state.userLoggedIn}

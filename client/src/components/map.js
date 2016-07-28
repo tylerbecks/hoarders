@@ -27,8 +27,8 @@ export default class OurMap extends React.Component {
         {this.props.treasureChestData.map((treasureChest, index) => {
           return (<TreasureChest
             key={treasureChest._id || index}
-            lat={treasureChest.location.substring(0, 7) }
-            lng={treasureChest.location.substring(7, 17) }
+            lat={treasureChest.location.substring(0, 7)}
+            lng={treasureChest.location.substring(7, 17)}
             treasureChestData={treasureChest}
           />);
         })}

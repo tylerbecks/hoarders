@@ -1,6 +1,5 @@
 import React from 'react';
 import { treasureChestHoverStyle, treasureChestStyle, outerDivStyle } from './treasureStyle.js';
-// import Tooltip from './tooltip.jsx';
 
 export default class SkateSpot extends React.Component {
 
