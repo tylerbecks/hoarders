@@ -6,7 +6,7 @@ export class Authentication extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      login: false,
+      login: true,
       usernameText: '',
       passwordText: '',
     };

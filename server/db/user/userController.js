@@ -27,6 +27,7 @@ module.exports = {
           username,
           password,
         }).then((createdUser) => {
+          console.log(createdUser);
           socket.emit('Authentication', createdUser);
         }).catch((err) => {
           console.log('Failed to create User Data', err);

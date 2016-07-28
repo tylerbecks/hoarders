@@ -19,6 +19,9 @@
   float: none;
   margin: auto;
 }
+.clickable {
+  font-weight: bold;
+}
 .clickable:hover {
   cursor: pointer;
   color: #006dcc;
