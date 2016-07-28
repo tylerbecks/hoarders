@@ -29,4 +29,12 @@ module.exports = {
       }
     });
   },
+
+  updateUserPoints: (username, socket) => {
+    User.findOne({ username }), (err, userData) => { 
+      if (userData) {
+        userData.points++; 
+      }
+    }
+  }
 };
