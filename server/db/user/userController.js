@@ -41,28 +41,24 @@ module.exports = {
     var newLocB = location.substring(8, 17);
     var newLoc = String(newLocA) + String(newLocB);
 
-    User.findOne({ username }, (err, userData) => { 
+    User.findOne({ username }, (err, userData) => {
       if (userData) {
         var flag = true;
         if (userData.locations.length < 1) {
-          console.log('this should happen very first time');
           userData.locations.push(newLoc);
-          userData.points++; 
+          userData.points++;
           userData.markModified('locations', 'points');
           userData.save(() => {
-            console.log('saving userdata');
           });
           socket.emit('updateUserPoints', true);
         } else {
           for (var i = 0; i < userData.locations.length; i++) {
             if (userData.locations[i] === newLoc) {
-              console.log('user already visited location');
               socket.emit('updateUserPoints', false);
               flag = false;
             }
           }
           if (flag) {
-            console.log('user hasnt been here');
             userData.locations.push(newLoc);
             userData.points++;
             userData.markModified('locations', 'points');

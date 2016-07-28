@@ -61,7 +61,6 @@ export default class App extends React.Component {
     });
   }
 
-
   updateTreasureState() {
     if (this.state.treasureChestData.length) {
       for (let i = 0; i < this.state.treasureChestData.length; i++) {

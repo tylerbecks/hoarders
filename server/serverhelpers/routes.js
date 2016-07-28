@@ -1,4 +1,3 @@
-const chatroomController = require('../db/chatroom/chatroomController.js');
 const userController = require('../db/user/userController.js');
 const treasureChestController = require('../db/treasureChest/treasureChestController.js');
 
