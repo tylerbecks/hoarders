@@ -10,11 +10,9 @@ module.exports = {
 		var newLoc = String(newLocA) + String(newLocB);
 
 		treasureChest.findOne({ 'location': newLoc }, (err, treasureData) => {
-			console.log('My booty: ', treasureData);
 			if (treasureData) {
 				socket.emit('updateTreasureState', true);
 			}
-
 			socket.emit('updateTreasureState', false);
 		});
 	},

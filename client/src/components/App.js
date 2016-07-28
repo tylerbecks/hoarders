@@ -16,7 +16,7 @@ const dummyData = [
   },
   {
     name: '',
-    lat: 37.791,
+    lat: 37.787,
     lng: -122.409,
     address: '',
     shortDescription: '',
@@ -48,21 +48,25 @@ export default class App extends React.Component {
   componentWillMount() {
     this.logOutUser = this.logOutUser.bind(this);
 
+    this.getUserScore();
+    this.props.mainSocket.on('getUserScore', (score) => {
+      this.setState({
+        score: score
+      })
+    });
     // selects and executes which source to use for setting the location state of
     // user.
     const locationSource = this.updateLocationState.bind(this);
-    setInterval(locationSource, 2000);
+    setInterval(locationSource, 500);
 
-    // listens for a messages update from the main server
+
     this.props.mainSocket.on('updateTreasureState', (location) => {
-      console.log('Booty on the clients face', location);
       if (location) {
         this.updateUserPoints();
       }
     });
 
     this.props.mainSocket.on('updateUserPoints', (results) => {
-      console.log('Im in it baby', results);
       if (results) {
         console.log('Here is your score: ', this.state.score);
         this.state.score++;
@@ -77,9 +81,12 @@ export default class App extends React.Component {
     });
   }
 
+  getUserScore() {
+    this.props.mainSocket.emit('getUserScore', {username: this.state.username});
+  }
+
   updateUserPoints() {
     var userObj = { username: this.state.username, location: this.state.location };
-    console.log('Sooooooooo many points rn', userObj);
 
     this.props.mainSocket.emit('updateUserPoints', userObj);
   }

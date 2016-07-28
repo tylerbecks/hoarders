@@ -4,7 +4,6 @@ const treasureChestController = require('../db/treasureChest/treasureChestContro
 
 module.exports = (socket) => {
   socket.on('updateTreasureState', (location) => {
-    console.log('Socket all over me', location);
     treasureChestController.updateTreasureState(location, socket);
   });
 
@@ -18,5 +17,9 @@ module.exports = (socket) => {
 
   socket.on('updateUserPoints', (userObj) => {
     userController.updateUserPoints(userObj.username, userObj.location, socket);
+  });
+
+  socket.on('getUserScore', (userObj) => {
+    userController.getUserScore(userObj.username, socket);
   });
 };
