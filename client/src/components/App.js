@@ -5,25 +5,27 @@ import { Authenticated } from './Authenticated';
 const dummyData = [
   {
     name: '',
-    lat: 37.785,
-    lng: -122.409,
+    lat: 37.7847,
+    lng: -122.4090,
     address: '',
     shortDescription: '',
     detailedDescription: '',
     bust: 'hello hello',
     comments: [],
     checkin: [],
+    loc: '37.7847-122.4090'
   },
   {
     name: '',
-    lat: 37.787,
-    lng: -122.409,
+    lat: 37.7837,
+    lng: -122.4090,
     address: '',
     shortDescription: '',
     detailedDescription: '',
     bust: 'hello hello',
     comments: [],
     checkin: [],
+    loc: '37.7837-122.4090'
   },
 ];
 
@@ -36,8 +38,8 @@ export default class App extends React.Component {
       location: '37.7835-122.4096',
       // demoMode: true,
       userLoggedIn: !!localStorage.token,
-      username: 'Tyler',
-      center: { lat: 37.7843, lng: -122.4096 },
+      username: '',
+      center: { lat: 37.7810, lng: -122.4096 },
       zoom: 15,
       counter: 0.0001,
       score: 0,
@@ -57,15 +59,17 @@ export default class App extends React.Component {
     // selects and executes which source to use for setting the location state of
     // user.
     const locationSource = this.updateLocationState.bind(this);
-    setInterval(locationSource, 500);
+    //const locationSource = this.getUserLocation.bind(this);
+    setInterval(locationSource, 400);
 
-    this.props.mainSocket.on('updateTreasureState', (location) => {
-      if (location) {
-        this.updateUserPoints();
-      }
-    });
+    // this.props.mainSocket.on('updateTreasureState', (location) => {
+    //   if (location) {
+    //     this.updateUserPoints();
+    //   }
+    // });
 
     this.props.mainSocket.on('updateUserPoints', (results) => {
+      console.log(' the results are', results);
       if (results) {
         this.state.score++;
       }
@@ -80,6 +84,16 @@ export default class App extends React.Component {
         localStorage.token = userDetails.username;
       }
     });
+  }
+  
+  updateTreasureState () {
+    if (dummyData.length) {
+      for (var i = 0; i < dummyData.length; i++) {
+        if (this.state.location === dummyData[i].loc) {
+          this.updateUserPoints();
+        }
+      }
+    }
   }
 
   getUserScore() {
@@ -103,11 +117,22 @@ export default class App extends React.Component {
     this.updateTreasureState();
   }
 
-  // will watch our location and frequently call set position
+  getUserLocation() {
+    const that = this; 
+
+    if (navigator.geolocation) {
+      console.log('Geolocation is supported!');
+      navigator.geolocation.getCurrentPosition((position, error) => {
+        that.setPosition(position);
+      });
+    }
+  }
+
+  //will watch our location and frequently call set position
   updateLocationState() {
     // need this, every individual call to move
-    var dummyLat = 37.7847;
-    var dummyLon = -122.4096;
+    var dummyLat = 37.7843;
+    var dummyLon = -122.4090;
     let position = {};
     position.coords = {};
     position.coords.latitude = dummyLat + this.state.counter;
@@ -117,26 +142,12 @@ export default class App extends React.Component {
     this.setState({
       counter: reCount,
     });
-
-    // listens for a location update from the demo server
-    // this.props.demoSocket.on('updateLocationStateDemo', (data) => {
-    //   this.setPosition(position);
-    // });
-
-    // if (navigator.geolocation) {
-    //   navigator.geolocation.getCurrentPosition(this.setPosition.bind(this), this.error);
-    // } else {
-    //   console.log('geolocation not supported');
-    // }
   }
-
-  // socket request to demo server to update the state of the location of the app
-
 
   // socket request to the main server to update messages state based on location state
-  updateTreasureState() {
-    this.props.mainSocket.emit('updateTreasureState', this.state.location);
-  }
+  // updateTreasureState() {
+  //   this.props.mainSocket.emit('updateTreasureState', this.state.location);
+  // }
 
   logOutUser(e) {
     e.preventDefault();
