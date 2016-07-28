@@ -4,25 +4,25 @@ mongoose.Promise = require('bluebird');
 
 module.exports = {
   validateUserLogin: (username, password, socket) => {
-    User.findOne({ username }, (err, userData) => {
+    User.findOne({ 'username': username }, (err, userData) => {
       var user = false;
       if (userData) {
         user = userData.password === password ? username : false;
         if (user) {
-          let username = userData.username;
+          var username = userData.username;
         } else {
-          let username = undefined; 
+          var username = undefined;
         }
       }
 
-      let userObj = { username: username, userLoggedIn: user};
+      var userObj = { username: username, userLoggedIn: user };
 
       socket.emit('Authentication', userObj);
     });
   },
 
   validateUserSignup: (username, password, socket) => {
-    User.findOne({ username }, (err, userData) => {
+    User.findOne({ 'username': username }, (err, userData) => {
       if (userData) {
         socket.emit('Authentication', false);
       } else {
@@ -38,10 +38,10 @@ module.exports = {
     });
   },
 
-  updateUserPoints: (username, location,  socket) => {
-    User.findOne({ username }), (err, userData) => { 
+  updateUserPoints: (username, location, socket) => {
+    User.findOne({ 'username': username }, (err, userData) => {
       if (userData) {
-        let flag = true; 
+        var flag = true;
         for (var i = 0; i < userData.locations.length; i++) {
           if (userData.locations[i] === location) {
             flag = false;
@@ -55,6 +55,6 @@ module.exports = {
           socket.emit('updateUserPoints', false);
         }
       }
-    }
-  }
+    });
+  },
 };
