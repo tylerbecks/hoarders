@@ -9,3 +9,6 @@
 .navbar-toggle {
   z-index:3;
 }
+.wrapper {
+  padding: 0;
+}

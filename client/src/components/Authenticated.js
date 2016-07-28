@@ -18,7 +18,7 @@ export const Authenticated = (props) => {
   };
 
   let ourMap;
-  const mapStyle = { height: screen.height - (0.15 * screen.height) };
+  const mapStyle = { height: screen.height - (0.05 * screen.height) };
 
   // render the map in all cases
   const googleMap = (

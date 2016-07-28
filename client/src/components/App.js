@@ -59,7 +59,6 @@ export default class App extends React.Component {
     const locationSource = this.updateLocationState.bind(this);
     setInterval(locationSource, 500);
 
-
     this.props.mainSocket.on('updateTreasureState', (location) => {
       if (location) {
         this.updateUserPoints();
