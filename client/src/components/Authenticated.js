@@ -1,5 +1,7 @@
 import React from 'react';
 import OurMap from './map.js';
+import MyNav from './NavBar.js';
+
 // import { ChatRoom } from './ChatRoom.js';
 // import { OutOfChatRoom } from './OutOfChatRoom.js';
 // import { Jumbotron, Button } from 'react-bootstrap';
@@ -20,7 +22,7 @@ export const Authenticated = (props) => {
 
   // render the map in all cases
   const googleMap = (
-    <div className="map-wrapper" style={mapStyle}>
+    <div className="map-wrapper mappy" style={mapStyle}>
       <OurMap
         center={props.center}
         zoom={props.zoom}
@@ -37,6 +39,7 @@ export const Authenticated = (props) => {
 
   return (
     <div>
+      <MyNav />
       {ourMap}
     </div>
   );
