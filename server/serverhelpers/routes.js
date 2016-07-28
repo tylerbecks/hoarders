@@ -7,6 +7,10 @@ module.exports = (socket) => {
     treasureChestController.updateTreasureState(location, socket);
   });
 
+  socket.on('getTreasureChests', () => {
+    treasureChestController.getTreasureChests(socket);
+  });
+
   socket.on('validateUserLogin', (userCredentials) => {
     userController.validateUserLogin(userCredentials.username, userCredentials.password, socket);
   });
