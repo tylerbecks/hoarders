@@ -39,7 +39,7 @@ export const Authenticated = (props) => {
 
   return (
     <div>
-      <MyNav />
+      <MyNav score={props.score} />
       {ourMap}
     </div>
   );

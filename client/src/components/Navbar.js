@@ -10,16 +10,21 @@ export default class MyNav extends React.Component {
 
   render() {
     return (
-      <Navbar className="navvy">
+      <Navbar inverse fixedTop>
         <Navbar.Header>
           <Navbar.Brand>
-            <a href="#">React-Bootstrap</a>
+            <a href="#">Hoarders</a>
           </Navbar.Brand>
+          <Navbar.Toggle />
         </Navbar.Header>
-        <Nav>
-          <NavItem eventKey={1} href="#">Link</NavItem>
-          <NavItem eventKey={2} href="#">Link</NavItem>
-        </Nav>
+        <Navbar.Collapse>
+          <Nav pullLeft>
+            <NavItem eventKey={1} href="#">Score: {this.props.score}</NavItem>
+          </Nav>
+          <Nav pullRight>
+            <NavItem eventKey={1} href="#">Login/Logout</NavItem>
+          </Nav>
+        </Navbar.Collapse>
       </Navbar>
     );
   }

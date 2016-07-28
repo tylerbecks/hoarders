@@ -1,7 +1,11 @@
-.navvy {
-  position: relative;
-  left: 0px;
-  top: 0px;
-  z-index: 2;
-  margin-bottom: 0;
+.navbar-brand {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 0;
+    text-align: center;
+    margin: auto;
+}
+.navbar-toggle {
+  z-index:3;
 }

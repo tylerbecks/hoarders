@@ -143,6 +143,7 @@ export default class App extends React.Component {
         zoom={this.state.zoom}
         center={this.state.center}
         treasureChestData={this.state.treasureChestData}
+        score={this.state.score}
       />
     );
 

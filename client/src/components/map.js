@@ -19,7 +19,7 @@ export default class OurMap extends React.Component {
     // google map component from google-map-react
     return (
       <GoogleMap
-        bootstrapURLKeys={{ key: 'AIzaSyDZjkD659gGlpyUKXU14_Tomji58BSfI0A', language: 'en' }}
+        bootstrapURLKeys={{ key: 'AIzaSyC5OhOfNkoT2WERe9fy7Odk8TEKYrCy3z4', language: 'en' }}
         options={this.createMapOptions}
         center={this.props.center} zoom={this.props.zoom}
       >
