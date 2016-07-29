@@ -58,11 +58,12 @@ export default class App extends React.Component {
     });
 
     this.props.mainSocket.on('updateUserPoints', (results) => {
-      console.log('coming back to update points!', results)
+      console.log('points will update? - answer: ', results)
       if (results) {
         this.state.score++;
         console.log('getting user chests')
         this.getUserChests();
+        // this.advert();
       }
     });
 
@@ -77,9 +78,24 @@ export default class App extends React.Component {
     });
   }
 
+  // advert() {
+  //   var temp =this.state.score; 
+  //   setTimeout(function() {
+  //     alert(temp + " whole dollar? Subway's ham sandwich happens to be JUST that amount!", <br />, "TODAY ONLY!")
+  //   }, 3000)
+  // }
+
+
+
+
+
+
   updateTreasureState() {
     if (this.state.treasureChestData.length) {
       for (var i = 0; i < this.state.treasureChestData.length; i++) {
+
+        // console.log('treasureChestData[i]: ', this.state.treasureChestData[i].location )
+        // console.log('state location: ', this.state.location )
 
         var chestLat = this.state.treasureChestData[i].location.slice(0, 6);
         var chestLong = this.state.treasureChestData[i].location.slice(7, 15);
@@ -88,14 +104,16 @@ export default class App extends React.Component {
 
         // console.log('chest: ', chestLat, chestLong)
         // console.log('state: ', stateLat, stateLong)
-        if ( ( stateLat > (chestLat-5) && stateLat < (chestLat+5) ) 
-           &&
-           ( stateLong > (chestLong-5) && stateLong < (chestLong+5) ) ) {
-          console.log('in range! Calling updateUserPoints')
-            this.updateUserPoints();
+        // console.log('chest: ', chestLat, chestLong, ' state: ', stateLat, stateLong)
+        // if ( ( stateLat > (chestLat-5) && stateLat < (chestLat+5) ) 
+        //    &&
+        //    ( stateLong > (chestLong-5) && stateLong < (chestLong+5) ) ) {
+        //   console.log('in range! Calling updateUserPoints')
+        // }
+        if (chestLat === stateLat && chestLong === stateLong) {
+          console.log('a match!')
+          this.updateUserPoints();
         }
-
-
 
         // if (this.state.location === this.state.homebase) {
         //   this.bankYourMoney();
@@ -205,7 +223,7 @@ export default class App extends React.Component {
         username={this.state.username}
         dummyLat={Number(this.state.location.slice(0, 7))}
         dummyLong={Number(this.state.location.slice(7))}
-        // dummyLong={-122.4093}
+        // dummyLong={-122.4070}
         messages={this.state.messages}
         userLoggedIn={this.state.userLoggedIn}
         addMessageToChatRoom={this.addMessageToChatRoom}
@@ -215,8 +233,10 @@ export default class App extends React.Component {
         center={this.state.center}
         treasureChestData={this.state.treasureChestData}
         score={this.state.score}
+        hoard={this.state.hoard}
         userChests={this.state.userChests}
       />
+      
     );
 
     const notLoggedIn = (
