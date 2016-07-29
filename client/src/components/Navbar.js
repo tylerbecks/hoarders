@@ -19,10 +19,17 @@ export default class MyNav extends React.Component {
         </Navbar.Header>
         <Navbar.Collapse>
           <Nav pullLeft>
-            <NavItem eventKey={1} href="#">{this.props.username}'s score: {this.props.score}</NavItem>
+            <NavItem eventKey={1} href="#">
+            {this.props.username}'s score: {this.props.score}
+            </NavItem>
           </Nav>
           <Nav pullRight>
-            <NavItem eventKey={1} href="#" onClick={this.props.logOutUser}>Logout</NavItem>
+            <NavItem
+              eventKey={1}
+              href="#"
+              onClick={this.props.logOutUser}
+            >Logout
+            </NavItem>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
