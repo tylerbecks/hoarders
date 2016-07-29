@@ -25,6 +25,7 @@ export const Authenticated = (props) => {
         treasureChestData={props.treasureChestData}
         dummyLat={props.dummyLat}
         dummyLong={props.dummyLong}
+        userChests={props.userChests}
       />
     </div>);
 

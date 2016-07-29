@@ -2,7 +2,7 @@ import React from 'react';
 import GoogleMap from 'google-map-react';
 import UserSpot from './userSpot.js';
 import TreasureChest from './TreasureChest.js';
-
+import { visitedChestStyle, newChestStyle } from './treasureStyle.js';
 
 export default class OurMap extends React.Component {
   constructor(props) {
@@ -25,15 +25,16 @@ export default class OurMap extends React.Component {
       >
         <UserSpot user={'Davey'} lat={this.props.dummyLat} lng={this.props.dummyLong} />
         {this.props.treasureChestData.map((treasureChest, index) => {
+          const chestStyle = treasureChest.location in this.props.userChests ? visitedChestStyle : newChestStyle;
           return (<TreasureChest
             key={treasureChest._id || index}
             lat={treasureChest.location.substring(0, 7)}
             lng={treasureChest.location.substring(7, 17)}
             treasureChestData={treasureChest}
+            chestStyle={chestStyle}
           />);
         })}
       </GoogleMap>
     );
   }
 }
-

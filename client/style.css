@@ -21,8 +21,12 @@
 }
 .clickable {
   font-weight: bold;
+  transition: all 0.1s ease
 }
 .clickable:hover {
   cursor: pointer;
   color: #006dcc;
+}
+.btn {
+  transition: all 0.1s ease
 }

@@ -37,7 +37,7 @@ module.exports = {
   },
 
   updateUserPoints: (username, location,  socket) => {
-    console.log('updating user points')
+    console.log('updating user points');
     var newLocA = location.substring(0, 6);
     var newLocB = location.substring(7, 17);
     var newLoc = String(newLocA) + String(newLocB);
@@ -79,6 +79,16 @@ module.exports = {
         socket.emit('getUserScore', userData.points);
       } else {
         socket.emit('getUserScore', 0);
+      }
+    });
+  },
+
+  getUserChests: (username, socket) => {
+    User.findOne({ username }, (err, userData) => {
+      if (userData) {
+        socket.emit('getUserChests', userData.locations);
+      } else {
+        socket.emit('getUserChests', []);
       }
     });
   },

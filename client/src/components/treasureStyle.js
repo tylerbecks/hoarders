@@ -1,14 +1,29 @@
 // size of the outer div for skull icons
-export const eSize = 30;
+export const eSize = 35;
 
-export const treasureChestStyle = {
+export const newChestStyle = {
   position: 'absolute',
   width: '100%',
   height: '100%',
   left: -eSize / 2,
   top: -eSize / 2,
   borderRadius: eSize,
-  content: 'url(https://d30y9cdsu7xlg0.cloudfront.net/png/7173-200.png)',
+  content: 'url(../images/greenChest.png)',
+  textAlign: 'center',
+  fontSize: 16,
+  fontWeight: 'bold',
+  padding: 4,
+  cursor: 'pointer',
+};
+
+export const visitedChestStyle = {
+  position: 'absolute',
+  width: '100%',
+  height: '100%',
+  left: -eSize / 2,
+  top: -eSize / 2,
+  borderRadius: eSize,
+  content: 'url(../images/grayChest.png)',
   textAlign: 'center',
   fontSize: 16,
   fontWeight: 'bold',

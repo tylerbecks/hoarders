@@ -25,4 +25,8 @@ module.exports = (socket) => {
   socket.on('getUserScore', (userObj) => {
     userController.getUserScore(userObj.username, socket);
   });
+
+  socket.on('getUserChests', (userObj) => {
+    userController.getUserChests(userObj.username, socket);
+  });
 };
