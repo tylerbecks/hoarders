@@ -41,7 +41,7 @@ module.exports = {
     var newLocA = location.substring(0, 6);
     var newLocB = location.substring(7, 17);
     var newLoc = String(newLocA) + String(newLocB);
-
+    console.log('server:',newLocA, newLocB)
     User.findOne({ username }, (err, userData) => {
       if (userData) {
         var flag = true;
