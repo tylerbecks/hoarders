@@ -16,6 +16,7 @@ export default class App extends React.Component {
       counter: 0.00001,
       score: 0,
       treasureChestData: [],
+      userChests: {},
     };
   }
 
@@ -25,19 +26,31 @@ export default class App extends React.Component {
     this.getTreasureChests();
 
     this.getUserScore();
+    this.getUserChests();
     // selects and executes which source to use for setting the location state of
     // user.
   }
 
   componentDidMount() {
     const locationSource = this.updateLocationState.bind(this);
-    setInterval(locationSource, 2000);
+    setInterval(locationSource, 800);
 
 
     this.props.mainSocket.on('getUserScore', (score) => {
       this.setState({
         score: score,
       });
+    });
+
+    this.props.mainSocket.on('getUserChests', (chests) => {
+      let chestObj = {};
+      for (const chest of chests) {
+        chestObj[chest] = true;
+      }
+      this.setState({
+        userChests: chestObj,
+      });
+      console.log('UserChests: ', this.state.userChests);
     });
 
     this.props.mainSocket.on('getTreasureChests', (chests) => {
@@ -68,7 +81,6 @@ export default class App extends React.Component {
         var LocA = this.state.location.substring(0, 6);
         var LocB = this.state.location.substring(7, 17);
         var trunc = String(LocA) + String(LocB);
-        console.log('kkkkKKkKkkKKkKKK',trunc, ' and ', this.state.treasureChestData[i].location)
         if (trunc === this.state.treasureChestData[i].location) {
         console.log('match found!!! should set things in process');
           this.updateUserPoints();
@@ -81,13 +93,16 @@ export default class App extends React.Component {
     this.props.mainSocket.emit('getUserScore', { username: this.state.username });
   }
 
+  getUserChests() {
+    this.props.mainSocket.emit('getUserChests', { username: this.state.username });
+  }
+
   getTreasureChests() {
     this.props.mainSocket.emit('getTreasureChests');
   }
 
   updateUserPoints() {
     var userObj = { username: this.state.username, location: this.state.location };
-    console.log('trigger ', userObj)
     this.props.mainSocket.emit('updateUserPoints', userObj);
   }
   // will continually update our location state with our new position
@@ -99,7 +114,6 @@ export default class App extends React.Component {
     this.setState({
       location,
     });
-    console.log('setPos msetting this in state: ', location);
     this.updateTreasureState();
   }
 
@@ -116,7 +130,6 @@ export default class App extends React.Component {
   // will watch our location and frequently call set position
   updateLocationState() {
     // need this, every individual call to move
-    console.log('updating location state!');
     var dummyLat = 37.78270;
     var dummyLon = -122.41010;
     let position = {};
@@ -158,6 +171,7 @@ export default class App extends React.Component {
         center={this.state.center}
         treasureChestData={this.state.treasureChestData}
         score={this.state.score}
+        userChests={this.state.userChests}
       />
     );
 
