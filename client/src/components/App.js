@@ -26,18 +26,16 @@ export default class App extends React.Component {
 
   componentWillMount() {
     this.logOutUser = this.logOutUser.bind(this);
-
     this.getTreasureChests();
-
     this.getUserScore();
     this.getUserChests();
-    // selects and executes which source to use for setting the location state of
-    // user.
+    // selects and executes which source to use for setting the location state of user.
   }
 
   componentDidMount() {
-    const locationSource = this.updateLocationState.bind(this);
-    setInterval(locationSource, 1000);
+    // const locationSource = this.updateLocationState.bind(this);
+    const locationSource = this.getUserLocation.bind(this);
+    setInterval(locationSource, 5000);
     this.props.mainSocket.on('getUserScore', (score) => {
       this.setState({
         score: score,
@@ -63,6 +61,8 @@ export default class App extends React.Component {
       console.log('coming back to update points!', results)
       if (results) {
         this.state.score++;
+        console.log('getting user chests')
+        this.getUserChests();
       }
     });
 
@@ -80,17 +80,34 @@ export default class App extends React.Component {
   updateTreasureState() {
     if (this.state.treasureChestData.length) {
       for (var i = 0; i < this.state.treasureChestData.length; i++) {
-        if (this.state.location === this.state.homebase) {
-          console.log("BANK YOUR MONEY, BABYYY!");
-          this.bankYourMoney();
-          return;
-        } else {
-          if (this.state.location === this.state.treasureChestData[i].location) {
-          console.log('user     location: ', this.state.location);
-          console.log('treasure location: ', this.state.treasureChestData[i].location);
+
+        var chestLat = this.state.treasureChestData[i].location.slice(0, 6);
+        var chestLong = this.state.treasureChestData[i].location.slice(7, 15);
+        var stateLat = this.state.location.slice(0, 6);
+        var stateLong = this.state.location.slice(7, 15);
+
+        // console.log('chest: ', chestLat, chestLong)
+        // console.log('state: ', stateLat, stateLong)
+        if ( ( stateLat > (chestLat-5) && stateLat < (chestLat+5) ) 
+           &&
+           ( stateLong > (chestLong-5) && stateLong < (chestLong+5) ) ) {
+          console.log('in range! Calling updateUserPoints')
             this.updateUserPoints();
-          }
         }
+
+
+
+        // if (this.state.location === this.state.homebase) {
+        //   this.bankYourMoney();
+        //   return;
+        // } else {
+
+            // console.log('user     location: ', this.state.location);
+            // console.log('treasure location: ', this.state.treasureChestData[i].location);
+          // if (this.state.location === this.state.treasureChestData[i].location) {
+          //   console.log('shbooooooooooooooooooooooooooooooooooooooom!')
+          // }
+        // }
       }
     }
   }
@@ -100,8 +117,16 @@ export default class App extends React.Component {
       hoard: this.state.hoard = this.state.score,
       score: 0,
     })
+    //if score is greater than X, do something/change something
     console.log('Your new hoard balance is: ', this.state.hoard)
   }
+
+  stealYourMoney() {
+    this.setState({
+      score: 0,
+    })
+  }
+
   getUserScore() {
     this.props.mainSocket.emit('getUserScore', { username: this.state.username });
   }
@@ -115,7 +140,12 @@ export default class App extends React.Component {
   }
 
   updateUserPoints() {
-    var userObj = { username: this.state.username, location: this.state.location };
+
+    //saving treasurechest as a fixed(3)
+    var stateLat = this.state.location.substring(0, 6);
+    var stateLong = this.state.location.substring(7, 15);
+    var newLocation = String(stateLat) + String(stateLong);
+    var userObj = { username: this.state.username, location: newLocation };
     this.props.mainSocket.emit('updateUserPoints', userObj);
   }
   // will continually update our location state with our new position
@@ -141,20 +171,20 @@ export default class App extends React.Component {
   }
 
   // will watch our location and frequently call set position
-  updateLocationState() {
-    // need this, every individual call to move
-    var dummyLat = 37.7820;
-    var dummyLon = -122.4101;
-    let position = {};
-    position.coords = {};
-    position.coords.latitude = dummyLat + this.state.counter;
-    position.coords.longitude = dummyLon;
-    this.setPosition(position);
-    var reCount = this.state.counter + 0.0001;
-    this.setState({
-      counter: reCount,
-    });
-  }
+  // updateLocationState() {
+  //   // need this, every individual call to move
+  //   var dummyLat = 37.7820;
+  //   var dummyLon = -122.4101;
+  //   let position = {};
+  //   position.coords = {};
+  //   position.coords.latitude = dummyLat + this.state.counter;
+  //   position.coords.longitude = dummyLon;
+  //   this.setPosition(position);
+  //   var reCount = this.state.counter + 0.0001;
+  //   this.setState({
+  //     counter: reCount,
+  //   });
+  // }
 
   // socket request to the main server to update messages state based on location state
   // updateTreasureState() {
@@ -174,7 +204,8 @@ export default class App extends React.Component {
       <Authenticated
         username={this.state.username}
         dummyLat={Number(this.state.location.slice(0, 7))}
-        dummyLong={-122.4101}
+        dummyLong={Number(this.state.location.slice(7))}
+        // dummyLong={-122.4093}
         messages={this.state.messages}
         userLoggedIn={this.state.userLoggedIn}
         addMessageToChatRoom={this.addMessageToChatRoom}
