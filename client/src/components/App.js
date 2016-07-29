@@ -8,12 +8,16 @@ export default class App extends React.Component {
 
     this.state = {
       messages: null,
-      location: '37.78352-122.40962',
+      // location: '37.78352-122.40962',
+      location: '37.7821-122.4090',
       userLoggedIn: !!localStorage.token,
       username: localStorage.token,
-      center: { lat: 37.7843, lng: -122.4096 },
+      center: { lat: 37.7821, lng: -122.4090 },
       zoom: 17,
-      counter: 0.00001,
+      // homebase: '37.7837-122.4090',
+      homebase: '37.7851-122.4101',
+      hoard: 0,
+      counter: 0.0001,
       score: 0,
       treasureChestData: [],
       userChests: {},
@@ -33,9 +37,7 @@ export default class App extends React.Component {
 
   componentDidMount() {
     const locationSource = this.updateLocationState.bind(this);
-    setInterval(locationSource, 800);
-
-
+    setInterval(locationSource, 1000);
     this.props.mainSocket.on('getUserScore', (score) => {
       this.setState({
         score: score,
@@ -58,6 +60,7 @@ export default class App extends React.Component {
     });
 
     this.props.mainSocket.on('updateUserPoints', (results) => {
+      console.log('coming back to update points!', results)
       if (results) {
         this.state.score++;
       }
@@ -76,19 +79,29 @@ export default class App extends React.Component {
 
   updateTreasureState() {
     if (this.state.treasureChestData.length) {
-
       for (var i = 0; i < this.state.treasureChestData.length; i++) {
-        var LocA = this.state.location.substring(0, 6);
-        var LocB = this.state.location.substring(7, 17);
-        var trunc = String(LocA) + String(LocB);
-        if (trunc === this.state.treasureChestData[i].location) {
-        console.log('match found!!! should set things in process');
-          this.updateUserPoints();
+        if (this.state.location === this.state.homebase) {
+          console.log("BANK YOUR MONEY, BABYYY!");
+          this.bankYourMoney();
+          return;
+        } else {
+          if (this.state.location === this.state.treasureChestData[i].location) {
+          console.log('user     location: ', this.state.location);
+          console.log('treasure location: ', this.state.treasureChestData[i].location);
+            this.updateUserPoints();
+          }
         }
       }
     }
   }
 
+  bankYourMoney() {
+    this.setState({
+      hoard: this.state.hoard = this.state.score,
+      score: 0,
+    })
+    console.log('Your new hoard balance is: ', this.state.hoard)
+  }
   getUserScore() {
     this.props.mainSocket.emit('getUserScore', { username: this.state.username });
   }
@@ -108,8 +121,8 @@ export default class App extends React.Component {
   // will continually update our location state with our new position
   // returned from navigator.geolocation and check if we are in chat room
   setPosition(position) {
-    const latRound = position.coords.latitude.toFixed(5);
-    const lonRound = position.coords.longitude.toFixed(5);
+    const latRound = position.coords.latitude.toFixed(4);
+    const lonRound = position.coords.longitude.toFixed(4);
     const location = latRound.toString() + lonRound.toString();
     this.setState({
       location,
@@ -130,14 +143,14 @@ export default class App extends React.Component {
   // will watch our location and frequently call set position
   updateLocationState() {
     // need this, every individual call to move
-    var dummyLat = 37.78270;
-    var dummyLon = -122.41010;
+    var dummyLat = 37.7820;
+    var dummyLon = -122.4101;
     let position = {};
     position.coords = {};
     position.coords.latitude = dummyLat + this.state.counter;
     position.coords.longitude = dummyLon;
     this.setPosition(position);
-    var reCount = this.state.counter + 0.00001;
+    var reCount = this.state.counter + 0.0001;
     this.setState({
       counter: reCount,
     });
@@ -161,7 +174,7 @@ export default class App extends React.Component {
       <Authenticated
         username={this.state.username}
         dummyLat={Number(this.state.location.slice(0, 7))}
-        dummyLong={-122.4096}
+        dummyLong={-122.4101}
         messages={this.state.messages}
         userLoggedIn={this.state.userLoggedIn}
         addMessageToChatRoom={this.addMessageToChatRoom}
