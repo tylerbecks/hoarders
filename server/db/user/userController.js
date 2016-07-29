@@ -37,16 +37,12 @@ module.exports = {
   },
 
   updateUserPoints: (username, location,  socket) => {
-    console.log('updating user points');
-    var newLocA = location.substring(0, 6);
-    var newLocB = location.substring(7, 17);
-    var newLoc = String(newLocA) + String(newLocB);
-    console.log('server:',newLocA, newLocB)
+    console.log('updating user points for this loc: ', location);
     User.findOne({ username }, (err, userData) => {
       if (userData) {
         var flag = true;
         if (userData.locations.length < 1) {
-          userData.locations.push(newLoc);
+          userData.locations.push(location);
           userData.points++;
           userData.markModified('locations', 'points');
           userData.save(() => {
@@ -54,7 +50,7 @@ module.exports = {
           socket.emit('updateUserPoints', true);
         } else {
           for (var i = 0; i < userData.locations.length; i++) {
-            if (userData.locations[i] === newLoc) {
+            if (userData.locations[i] === location) {
               socket.emit('updateUserPoints', false);
               flag = false;
             }
@@ -67,6 +63,7 @@ module.exports = {
               console.log('saving new userData');
             });
             socket.emit('updateUserPoints', true);
+            socket.emit('getUserChests', userData.locations);
           }
         }
       }
