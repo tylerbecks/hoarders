@@ -8,12 +8,12 @@ export default class App extends React.Component {
 
     this.state = {
       messages: null,
-      location: '37.7835-122.4096',
+      location: '37.78352-122.40962',
       userLoggedIn: !!localStorage.token,
       username: localStorage.token,
       center: { lat: 37.7843, lng: -122.4096 },
       zoom: 17,
-      counter: 0.0001,
+      counter: 0.00001,
       score: 0,
       treasureChestData: [],
     };
@@ -63,14 +63,14 @@ export default class App extends React.Component {
 
   updateTreasureState() {
     if (this.state.treasureChestData.length) {
-      for (let i = 0; i < this.state.treasureChestData.length; i++) {
-        console.log('eoiutpwoireut', this.state.location);
-        console.log('kajdfhglakdjf', this.state.treasureChestData[i].location);
-        // var newLocA = this.state.location.substring(0, 7);
-        // var newLocB = this.state.location.substring(8, 17);
-        // var newLoc = String(newLocA) + String(newLocB);
-        if (this.state.location === this.state.treasureChestData[i].location) {
-        console.log('state: ', this.state.location, ' chest: ', this.state.treasureChestData[i].location);
+
+      for (var i = 0; i < this.state.treasureChestData.length; i++) {
+        var LocA = this.state.location.substring(0, 6);
+        var LocB = this.state.location.substring(7, 17);
+        var trunc = String(LocA) + String(LocB);
+        console.log('kkkkKKkKkkKKkKKK',trunc, ' and ', this.state.treasureChestData[i].location)
+        if (trunc === this.state.treasureChestData[i].location) {
+        console.log('match found!!! should set things in process');
           this.updateUserPoints();
         }
       }
@@ -87,14 +87,14 @@ export default class App extends React.Component {
 
   updateUserPoints() {
     var userObj = { username: this.state.username, location: this.state.location };
-
+    console.log('trigger ', userObj)
     this.props.mainSocket.emit('updateUserPoints', userObj);
   }
   // will continually update our location state with our new position
   // returned from navigator.geolocation and check if we are in chat room
   setPosition(position) {
-    const latRound = position.coords.latitude.toFixed(4);
-    const lonRound = position.coords.longitude.toFixed(4);
+    const latRound = position.coords.latitude.toFixed(5);
+    const lonRound = position.coords.longitude.toFixed(5);
     const location = latRound.toString() + lonRound.toString();
     this.setState({
       location,
@@ -117,14 +117,14 @@ export default class App extends React.Component {
   updateLocationState() {
     // need this, every individual call to move
     console.log('updating location state!');
-    var dummyLat = 37.7843;
-    var dummyLon = -122.4102;
+    var dummyLat = 37.78270;
+    var dummyLon = -122.41010;
     let position = {};
     position.coords = {};
     position.coords.latitude = dummyLat + this.state.counter;
     position.coords.longitude = dummyLon;
     this.setPosition(position);
-    var reCount = this.state.counter + 0.0001;
+    var reCount = this.state.counter + 0.00001;
     this.setState({
       counter: reCount,
     });

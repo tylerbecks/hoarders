@@ -37,8 +37,9 @@ module.exports = {
   },
 
   updateUserPoints: (username, location,  socket) => {
-    var newLocA = location.substring(0, 7);
-    var newLocB = location.substring(8, 17);
+    console.log('updating user points')
+    var newLocA = location.substring(0, 6);
+    var newLocB = location.substring(7, 17);
     var newLoc = String(newLocA) + String(newLocB);
 
     User.findOne({ username }, (err, userData) => {
