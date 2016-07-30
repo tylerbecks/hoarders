@@ -26,6 +26,7 @@ export const Authenticated = (props) => {
         dummyLat={props.dummyLat}
         dummyLong={props.dummyLong}
         bankedCoins={props.bankedCoins}
+        homebase={props.homebase}
       />
     </div>);
 

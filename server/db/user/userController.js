@@ -37,13 +37,13 @@ module.exports = {
   },
 
   updateBankedCoins: (username, coins, socket) => {
-    console.log(username,' banking coins!')
+    console.log(username, ' banking coins!')
     User.findOne({ username }, (err, userData) => {
       userData.locations.concat(coins);
       userData.markModified('locations');
       userData.save(() => {
-      })
-    })
+      });
+    });
   },
 
 

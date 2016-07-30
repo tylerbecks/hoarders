@@ -1,5 +1,5 @@
 import React from 'react';
-import { outerDivStyle } from './treasureStyle.js';
+import { homebaseStyle, outerHomebaseDivStyle } from './treasureStyle.js';
 
 export default class SkateSpot extends React.Component {
 
@@ -10,8 +10,8 @@ export default class SkateSpot extends React.Component {
   render() {
 
     return (
-      <div style={outerDivStyle}>
-        <div style={newChestStyle}>
+      <div style={outerHomebaseDivStyle}>
+        <div style={homebaseStyle(this.props.coins)}>
         </div>
       </div>
     );

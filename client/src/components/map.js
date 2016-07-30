@@ -3,6 +3,7 @@ import GoogleMap from 'google-map-react';
 import UserSpot from './userSpot.js';
 import TreasureChest from './TreasureChest.js';
 import { visitedChestStyle, newChestStyle } from './treasureStyle.js';
+import Homebase from './Homebase.js';
 
 export default class OurMap extends React.Component {
   constructor(props) {
@@ -24,6 +25,11 @@ export default class OurMap extends React.Component {
         center={this.props.center} zoom={this.props.zoom}
       >
         <UserSpot user={'Davey'} lat={this.props.dummyLat} lng={this.props.dummyLong} />
+        <Homebase
+          lat={this.props.homebase.substring(0, 7)}
+          lng={this.props.homebase.substring(7, 17)}
+          bankedCoins={this.props.bankedCoins}
+        />
         {this.props.coinsOnMap.map((coin, index) => {
           // console.log('davey walking: ', this.props.dummyLat, this.props.dummyLong)
           // console.log(coin);

@@ -8,7 +8,7 @@ import FormControl from 'react-bootstrap/lib/FormControl';
 import Button from 'react-bootstrap/lib/Button';
 
 export const Login = (props) => (
-  <Grid>
+  <Grid className="LoginContainer">
     <Row>
       <Col xs={7} sm={5} md={4} className="authComponent">
         <h1 className="welcome">Welcome Back</h1>
@@ -23,6 +23,7 @@ export const Login = (props) => (
             value={props.usernameText}
             type="text"
             placeholder="Username"
+            className="transparent"
           />
         </Col>
       </FormGroup>
@@ -34,6 +35,7 @@ export const Login = (props) => (
             value={props.passwordText}
             type="password"
             placeholder="Password"
+            className="transparent"
           />
         </Col>
       </FormGroup>
@@ -48,26 +50,11 @@ export const Login = (props) => (
           >Sign in
           </Button>
           <br />
-          <span className="signing">Don't have an account yet?
+          <div className="signing">Don't have an account yet?
             <span className="clickable" onClick={props.signUp}> Create one </span>
-          </span>
+          </div>
         </Col>
       </FormGroup>
     </Form>
   </Grid>
 );
-
-// export const Login = (props) => (
-//   <div className="homepage-hero-module">
-//     <div className="video-container">
-//       <div className="filter"></div>
-//       <video autoPlay loop className="fillWidth">
-//         <source src="../resources/Lonely-Chair/MP4/Lonely-Chair.mp4" type="video/mp4" />Your browser does not support the video tag. I suggest you upgrade your browser.
-//         <source src="../resources/Lonely-Chair/WEBM/Lonely-Chair.webm" type="video/webm" />Your browser does not support the video tag. I suggest you upgrade your browser.
-//       </video>
-//       <div className="poster hidden">
-//         <img src="../resources/Lonely-Chair/Snapshots/Lonely-Chair.jpg" alt="" />
-//       </div>
-//     </div>
-//   </div>
-// );

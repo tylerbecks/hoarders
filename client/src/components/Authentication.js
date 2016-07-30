@@ -80,8 +80,20 @@ export class Authentication extends React.Component {
     const pageToRender = !!this.state.login ? login : signup;
 
     return (
-      <div>
-        {pageToRender}
+      <div className="homepage-hero-module">
+        <div className="video-container">
+          <div className="filter"></div>
+          <video autoPlay loop className="fillWidth">
+            <source src="../resources/Lonely-Chair/MP4/Lonely-Chair.mp4" type="video/mp4" />Your browser does not support the video tag. I suggest you upgrade your browser.
+            <source src="../resources/Lonely-Chair/WEBM/Lonely-Chair.webm" type="video/webm" />Your browser does not support the video tag. I suggest you upgrade your browser.
+          </video>
+          <div className="poster hidden">
+            <img src="../resources/Lonely-Chair/Snapshots/Lonely-Chair.jpg" alt="" />
+          </div>
+          <div className="showDammit">
+            {pageToRender}
+          </div>
+        </div>
       </div>
     );
   }
