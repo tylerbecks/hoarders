@@ -7,64 +7,51 @@ export default class App extends React.Component {
     super(props);
 
     this.state = {
-      messages: null,
-      // location: '37.78352-122.40962',
-      location: '37.7821-122.4090',
+      // location: '',
+      location: '',
       userLoggedIn: !!localStorage.token,
       username: localStorage.token,
       center: { lat: 37.7821, lng: -122.4090 },
       zoom: 17,
-      // homebase: '37.7837-122.4090',
-      homebase: '37.7851-122.4101',
-      hoard: 0,
-      counter: 0.0001,
-      score: 0,
-      treasureChestData: [],
-      userChests: {},
+      homebase: '37.783-122.409',
+      counter: 0,
+      bankedCoins: [], //all banked coins added up
+      carriedCoins: [], //all coins currently carried not in bank
+      coinsOnMap: [], //all locations on map where there are coins
     };
   }
 
   componentWillMount() {
     this.logOutUser = this.logOutUser.bind(this);
-    this.getTreasureChests();
-    this.getUserScore();
-    this.getUserChests();
-    // selects and executes which source to use for setting the location state of user.
+    this.getBankedCoins();
+    this.getCoinsOnMap();
   }
 
   componentDidMount() {
-    // const locationSource = this.updateLocationState.bind(this);
-    const locationSource = this.getUserLocation.bind(this);
-    setInterval(locationSource, 5000);
-    this.props.mainSocket.on('getUserScore', (score) => {
+    // const locationSource = this.getUserLocation.bind(this);
+    const locationSource = this.getDaveLocation.bind(this);
+    setInterval(locationSource, 1000);
+
+    this.props.mainSocket.on('getBankedCoins', (myCoins) => {
+      console.log('sending off for coins');       
       this.setState({
-        score: score,
+        bankedCoins: myCoins,
       });
     });
 
-    this.props.mainSocket.on('getUserChests', (chests) => {
-      let chestObj = {};
-      for (const chest of chests) {
-        chestObj[chest] = true;
+    //this is transferring all coins from user db to state
+    this.props.mainSocket.on('getCoinsOnMap', (setCoins) => {
+      // console.log('getting coinsOnMap back', setCoins);
+      var that = this;
+      let filteredCoinsOnMap = [];
+      for (const coin of setCoins) {
+        if (this.state.bankedCoins.indexOf(coin.location) < 0) {
+          filteredCoinsOnMap.push(coin.location);
+        }
       }
       this.setState({
-        userChests: chestObj,
+        coinsOnMap: filteredCoinsOnMap,
       });
-      console.log('UserChests: ', this.state.userChests);
-    });
-
-    this.props.mainSocket.on('getTreasureChests', (chests) => {
-      this.setState({ treasureChestData: chests });
-    });
-
-    this.props.mainSocket.on('updateUserPoints', (results) => {
-      console.log('points will update? - answer: ', results)
-      if (results) {
-        this.state.score++;
-        console.log('getting user chests')
-        this.getUserChests();
-        // this.advert();
-      }
     });
 
     this.props.mainSocket.on('Authentication', (userDetails) => {
@@ -77,97 +64,84 @@ export default class App extends React.Component {
       }
     });
   }
+  updateCarriedCoins(location) {
+    //updating carried coins with fixed3 location
+    this.setState({
+      carriedCoins: this.state.carriedCoins.concat([location])
+    })
+    //iterate through coinsOnMap and remove one that's been picked up
+    for (var i = 0; i < this.state.coinsOnMap.length; i++) {
+      //capture lat and long for fixed4-coinOnMap
+      var tempLat = this.state.coinsOnMap[i].substring(0, 6);
+      var tempLong = this.state.coinsOnMap[i].substring(7, 15);
+      //capture lat and long for fixed3-current location
+      var currLat = location.substring(0, 6);
+      var currLong = location.substring(6, 14);
+      
+      // console.log('coin location: ', tempLat, tempLong)
+      // console.log('curr location: ', currLat, currLong)
 
-  // advert() {
-  //   var temp =this.state.score; 
-  //   setTimeout(function() {
-  //     alert(temp + " whole dollar? Subway's ham sandwich happens to be JUST that amount!", <br />, "TODAY ONLY!")
-  //   }, 3000)
-  // }
-
-
-
-
-
-
+      if (tempLat === currLat && tempLong === currLong) {
+        var firstHalf = this.state.coinsOnMap.slice(0, i);
+        var secondHalf = this.state.coinsOnMap.slice(i + 1);
+        var newCoinsOnMap = firstHalf.concat(secondHalf);
+        this.setState({
+          coinsOnMap: newCoinsOnMap
+        })
+        // console.log('current coinsOnMap: ' + this.state.coinsOnMap)
+        // console.log('updated carriedCoins: ', this.state.carriedCoins)
+        // console.log('updated bankedCoins: ', this.state.bankedCoins)
+      }
+    }
+  }
+  
   updateTreasureState() {
-    if (this.state.treasureChestData.length) {
-      for (var i = 0; i < this.state.treasureChestData.length; i++) {
+    //capture location in state
+    var stateLat = this.state.location.substring(0, 6);
+    var stateLong = this.state.location.substring(7, 15);
+    if (this.state.coinsOnMap.length) {
+      for (var i = 0; i < this.state.coinsOnMap.length; i++) {
+        var chestLat = this.state.coinsOnMap[i].substring(0, 6);
+        var chestLong = this.state.coinsOnMap[i].substring(7, 15);
 
-        // console.log('treasureChestData[i]: ', this.state.treasureChestData[i].location )
-        // console.log('state location: ', this.state.location )
-
-        var chestLat = this.state.treasureChestData[i].location.slice(0, 6);
-        var chestLong = this.state.treasureChestData[i].location.slice(7, 15);
-        var stateLat = this.state.location.slice(0, 6);
-        var stateLong = this.state.location.slice(7, 15);
-
-        // console.log('chest: ', chestLat, chestLong)
-        // console.log('state: ', stateLat, stateLong)
-        // console.log('chest: ', chestLat, chestLong, ' state: ', stateLat, stateLong)
-        // if ( ( stateLat > (chestLat-5) && stateLat < (chestLat+5) ) 
-        //    &&
-        //    ( stateLong > (chestLong-5) && stateLong < (chestLong+5) ) ) {
-        //   console.log('in range! Calling updateUserPoints')
-        // }
         if (chestLat === stateLat && chestLong === stateLong) {
-          console.log('a match!')
-          this.updateUserPoints();
+          console.log('Treasure!')
+          var truncLocation = String(stateLat) + String(stateLong);
+          this.updateCarriedCoins(truncLocation);
         }
-
-        // if (this.state.location === this.state.homebase) {
-        //   this.bankYourMoney();
-        //   return;
-        // } else {
-
-            // console.log('user     location: ', this.state.location);
-            // console.log('treasure location: ', this.state.treasureChestData[i].location);
-          // if (this.state.location === this.state.treasureChestData[i].location) {
-          //   console.log('shbooooooooooooooooooooooooooooooooooooooom!')
-          // }
-        // }
+      }
+    } 
+    // console.log('trying to check if I should bank or not - 37.783, -122.409')
+    console.log(stateLat + ' ' + stateLong)
+    if ('37.783' === stateLat && '-122.409' === stateLong) {
+      if (this.state.carriedCoins.length > 0) {
+        console.log('Banking: ', this.state.carriedCoins)
+        this.bankCoins();
+      } else {
+        console.log('nada to bank, loser')
       }
     }
   }
 
-  bankYourMoney() {
+  getBankedCoins() {
+    this.props.mainSocket.emit('getBankedCoins', { username: this.state.username })
+  }
+
+  getCoinsOnMap() {
+    this.props.mainSocket.emit('getCoinsOnMap');
+  }
+
+  bankCoins() {
+    // console.log('banking!')
+    var newObj = { username: this.state.username, coins: this.state.carriedCoins }
+    this.props.mainSocket.emit('updateBankedCoins', newObj);
     this.setState({
-      hoard: this.state.hoard = this.state.score,
-      score: 0,
-    })
-    //if score is greater than X, do something/change something
-    console.log('Your new hoard balance is: ', this.state.hoard)
-  }
-
-  stealYourMoney() {
-    this.setState({
-      score: 0,
+      bankedCoins:  this.state.bankedCoins.concat(this.state.carriedCoins),
+      carriedCoins: [],
     })
   }
 
-  getUserScore() {
-    this.props.mainSocket.emit('getUserScore', { username: this.state.username });
-  }
 
-  getUserChests() {
-    this.props.mainSocket.emit('getUserChests', { username: this.state.username });
-  }
-
-  getTreasureChests() {
-    this.props.mainSocket.emit('getTreasureChests');
-  }
-
-  updateUserPoints() {
-
-    //saving treasurechest as a fixed(3)
-    var stateLat = this.state.location.substring(0, 6);
-    var stateLong = this.state.location.substring(7, 15);
-    var newLocation = String(stateLat) + String(stateLong);
-    var userObj = { username: this.state.username, location: newLocation };
-    this.props.mainSocket.emit('updateUserPoints', userObj);
-  }
-  // will continually update our location state with our new position
-  // returned from navigator.geolocation and check if we are in chat room
   setPosition(position) {
     const latRound = position.coords.latitude.toFixed(4);
     const lonRound = position.coords.longitude.toFixed(4);
@@ -175,6 +149,7 @@ export default class App extends React.Component {
     this.setState({
       location,
     });
+    // console.log('setPos location fixed to 4: ', location)
     this.updateTreasureState();
   }
 
@@ -188,26 +163,74 @@ export default class App extends React.Component {
     }
   }
 
-  // will watch our location and frequently call set position
-  // updateLocationState() {
-  //   // need this, every individual call to move
-  //   var dummyLat = 37.7820;
-  //   var dummyLon = -122.4101;
-  //   let position = {};
-  //   position.coords = {};
-  //   position.coords.latitude = dummyLat + this.state.counter;
-  //   position.coords.longitude = dummyLon;
-  //   this.setPosition(position);
-  //   var reCount = this.state.counter + 0.0001;
-  //   this.setState({
-  //     counter: reCount,
-  //   });
-  // }
+  getDaveLocation() {
+    //lat bigger as you go up
+    // long bigger as you go left
 
-  // socket request to the main server to update messages state based on location state
-  // updateTreasureState() {
-  //   this.props.mainSocket.emit('updateTreasureState', this.state.location);
-  // }
+    const locs = [
+    '37.7809-122.4120',
+      '37.7814-122.4119',
+      '37.7819-122.4116',
+      '37.7824-122.4111',
+      '37.7824-122.4107',
+      '37.7824-122.4105',
+    '37.7829-122.4101',
+    '37.7829-122.4101',
+
+      '37.7833-122.4098',
+      '37.7834-122.4096',
+      '37.7836-122.4095',
+      '37.7839-122.4095',
+      '37.7841-122.4094',
+    '37.7842-122.4093',
+    '37.7850-122.4093',
+
+      '37.7847-122.4093',
+      '37.7843-122.4092',
+      '37.7842-122.4092',
+      '37.7840-122.4092',
+      '37.7839-122.4091',
+    '37.7837-122.4090',
+    '37.7837-122.4090',
+    
+      '37.7839-122.4084',
+      '37.7841-122.4080',
+      '37.7842-122.4079',
+      '37.7843-122.4078',
+    '37.7849-122.4075',
+    '37.7849-122.4075',
+    
+      '37.7843-122.4076',
+      '37.7838-122.4077',
+      '37.7835-122.4078',
+      '37.7834-122.4078',
+    '37.7829-122.4079',
+    '37.7829-122.4079',
+    
+      '37.7831-122.4080',
+      '37.7833-122.4082',
+      '37.7834-122.4083',
+      '37.7835-122.4085',
+    '37.7836-122.4090',
+    '37.7834-122.4092',
+    '37.7838-122.4092'
+    ]
+    if (this.state.counter > 40) {
+      console.log('end of loop')
+      this.setState({
+        location: locs[40]
+      })
+    } else {
+      this.setState({
+        location: locs[this.state.counter]
+      })
+      this.setState({
+        counter: this.state.counter+1
+      })
+    }
+
+    this.updateTreasureState();
+  }
 
   logOutUser(e) {
     e.preventDefault();
@@ -223,20 +246,14 @@ export default class App extends React.Component {
         username={this.state.username}
         dummyLat={Number(this.state.location.slice(0, 7))}
         dummyLong={Number(this.state.location.slice(7))}
-        // dummyLong={-122.4070}
-        messages={this.state.messages}
         userLoggedIn={this.state.userLoggedIn}
-        addMessageToChatRoom={this.addMessageToChatRoom}
-        createChatRoom={this.createChatRoom}
         logOutUser={this.logOutUser}
         zoom={this.state.zoom}
         center={this.state.center}
-        treasureChestData={this.state.treasureChestData}
-        score={this.state.score}
-        hoard={this.state.hoard}
-        userChests={this.state.userChests}
+        coinsOnMap={this.state.coinsOnMap}
+        carriedCoins={this.state.carriedCoins}
+        bankedCoins={this.state.bankedCoins}
       />
-      
     );
 
     const notLoggedIn = (

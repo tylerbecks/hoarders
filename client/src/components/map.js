@@ -24,14 +24,13 @@ export default class OurMap extends React.Component {
         center={this.props.center} zoom={this.props.zoom}
       >
         <UserSpot user={'Davey'} lat={this.props.dummyLat} lng={this.props.dummyLong} />
-        {this.props.treasureChestData.map((treasureChest, index) => {
-          const chestStyle = treasureChest.location in this.props.userChests ? visitedChestStyle : newChestStyle;
+        {this.props.coinsOnMap.map((coin, index) => {
+          // console.log('davey walking: ', this.props.dummyLat, this.props.dummyLong)
+          // console.log(coin);
           return (<TreasureChest
-            key={treasureChest._id || index}
-            lat={treasureChest.location.substring(0, 7)}
-            lng={treasureChest.location.substring(7, 17)}
-            treasureChestData={treasureChest}
-            chestStyle={chestStyle}
+            key={coin._id || index}
+            lat={coin.substring(0, 7)}
+            lng={coin.substring(7, 17)}     
           />);
         })}
       </GoogleMap>

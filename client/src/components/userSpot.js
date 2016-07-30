@@ -8,11 +8,9 @@ export default class UserSpot extends React.Component {
   }
 
   render() {
-    var style = userSpotStyle;
-
     return (
       <div style={outerDivStyle}>
-        <div style={style}>
+        <div style={userSpotStyle}>
         </div>
       </div>
     );

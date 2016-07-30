@@ -20,7 +20,10 @@ export default class MyNav extends React.Component {
         <Navbar.Collapse>
           <Nav pullLeft>
             <NavItem eventKey={1} href="#">
-            {this.props.username}'s score: {this.props.score}
+            Score: {this.props.bankedCoins.length}
+            </NavItem>
+            <NavItem eventKey={1} href="#">
+            You are carrying {this.props.carriedCoins.length} coins
             </NavItem>
           </Nav>
           <Nav pullRight>
