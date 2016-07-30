@@ -11,7 +11,7 @@ export default class SkateSpot extends React.Component {
 
     return (
       <div style={outerDivStyle}>
-        <div style={this.props.chestStyle}>
+        <div style={newChestStyle}>
         </div>
       </div>
     );

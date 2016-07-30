@@ -4,11 +4,13 @@ mongoose.Promise = require('bluebird');
 
 module.exports = {
 
-  getTreasureChests: (socket) => {
-    treasureChest.find().then((chests) => {
-      socket.emit('getTreasureChests', chests);
+  getCoinsOnMap: (socket) => {
+    treasureChest.find().then((coins) => {
+      console.log(coins)
+      socket.emit('getCoinsOnMap', coins);
     });
   },
+
 
 
 	// updateTreasureState: (location, socket) => {
