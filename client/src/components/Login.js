@@ -10,14 +10,14 @@ import Button from 'react-bootstrap/lib/Button';
 export const Login = (props) => (
   <Grid className="LoginContainer">
     <Row>
-      <Col xs={7} sm={5} md={4} className="authComponent">
+      <Col xs={7} sm={7} md={7} className="authComponent">
         <h1 className="welcome">Welcome Back</h1>
       </Col>
     </Row>
 
     <Form horizontal>
       <FormGroup>
-        <Col xs={7} sm={5} md={4} className="authComponent">
+        <Col xs={7} sm={7} md={7} className="authComponent">
           <FormControl
             onChange={props.userChange}
             value={props.usernameText}
@@ -29,7 +29,7 @@ export const Login = (props) => (
       </FormGroup>
 
       <FormGroup controlId="formHorizontalPassword">
-        <Col xs={7} sm={5} md={4} className="authComponent">
+        <Col xs={7} sm={7} md={7} className="authComponent">
           <FormControl
             onChange={props.passwordChange}
             value={props.passwordText}
@@ -41,7 +41,7 @@ export const Login = (props) => (
       </FormGroup>
 
       <FormGroup>
-        <Col xs={7} sm={5} md={4} className="authComponent">
+        <Col xs={7} sm={7} md={7} className="authComponent">
           <Button
             onClick={props.validateUserLogin.bind(this)}
             type="submit"

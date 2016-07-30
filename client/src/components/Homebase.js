@@ -11,7 +11,7 @@ export default class SkateSpot extends React.Component {
 
     return (
       <div style={outerHomebaseDivStyle}>
-        <div style={homebaseStyle(this.props.coins)}>
+        <div style={homebaseStyle(this.props.bankedCoins.length)}>
         </div>
       </div>
     );

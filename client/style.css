@@ -21,6 +21,12 @@
   text-align: center;
   color: white;
 }
+.hoarders {
+  text-align: center;
+  font-size: 10em;
+  font-weight: bold;
+  color: black;
+}
 .signing {
   color: white;
   text-align: center;
@@ -29,9 +35,16 @@
   background-color: transparent;
   color: white;
 }
-.showDammit {
+.loginBox {
   position: fixed;
   top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+}
+.headerContainer {
+  position: absolute;
+  top: 10%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 20;
@@ -85,10 +98,24 @@
     width: 100%;
 }
 .video-container video {
-    position: absolute;
+    position: fixed;
     z-index: 0;
     bottom: 0;
 }
 .video-container video.fillWidth {
     width: 100%;
+}
+
+@media (min-aspect-ratio: 16/9) {
+  video {
+    width: 100%;
+    height: auto;
+  }
+}
+
+@media (max-aspect-ratio: 16/9) {
+  video {
+    width: auto;
+    height: 100%;
+  }
 }

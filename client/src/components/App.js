@@ -12,12 +12,12 @@ export default class App extends React.Component {
       username: localStorage.token,
       center: { lat: 37.7821, lng: -122.4090 },
       zoom: 17,
-      homebase: '37.783-122.409',
+      // homebase: '37.783-122.409',
       counter: 0,
-      bankedCoins: [], //all banked coins added up
-      carriedCoins: [], //all coins currently carried not in bank
-      coinsOnMap: [], //all locations on map where there are coins
-      // homebase: '37.7837-122.4090',
+      bankedCoins: [], // all banked coins added up
+      carriedCoins: [], // all coins currently carried not in bank
+      coinsOnMap: [], // all locations on map where there are coins
+      homebase: '37.7837-122.4090',
     };
   }
 

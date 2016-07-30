@@ -1,7 +1,7 @@
 import React from 'react';
-import { outerDivStyle } from './treasureStyle.js';
+import { outerDivStyle, newChestStyle } from './treasureStyle.js';
 
-export default class SkateSpot extends React.Component {
+export default class Coin extends React.Component {
 
   constructor(props) {
     super(props);

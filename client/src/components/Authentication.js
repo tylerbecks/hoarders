@@ -90,9 +90,12 @@ export class Authentication extends React.Component {
           <div className="poster hidden">
             <img src="../resources/Lonely-Chair/Snapshots/Lonely-Chair.jpg" alt="" />
           </div>
-          <div className="showDammit">
-            {pageToRender}
-          </div>
+        </div>
+        <div className="headerContainer">
+          <h1 className="hoarders">Hoarders</h1>
+        </div>
+        <div className="loginBox">
+          {pageToRender}
         </div>
       </div>
     );

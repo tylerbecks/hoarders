@@ -36,7 +36,7 @@ export default class OurMap extends React.Component {
           return (<TreasureChest
             key={coin._id || index}
             lat={coin.substring(0, 7)}
-            lng={coin.substring(7, 17)}     
+            lng={coin.substring(7, 17)}    
           />);
         })}
       </GoogleMap>
